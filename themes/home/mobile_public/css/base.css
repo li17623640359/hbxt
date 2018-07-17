@@ -1,0 +1,135 @@
+@charset "utf-8";
+/* CSS Document */
+html,body,div,p,span,a,i,em,ul,li,h2,h3,h4,form,input,dl,dd,dt{margin:0; padding:0;}
+body,html{font-family: Arial; font-size:.24rem; color:#333; background:#f1f1f1;}
+em{ font-style: normal;}
+a{ text-decoration: none; color: #333;}
+.br03{-moz-border-radius: .1rem;-webkit-border-radius: .1rem;border-radius: .1rem;}
+.br50{-moz-border-radius: 50%;-webkit-border-radius: 50%;border-radius: 50%;}
+.tws{ display:block;text-overflow:ellipsis;white-space: nowrap; overflow:hidden;}
+.bshadow{-moz-box-shadow:1px 1px 5px #ddd; -webkit-box-shadow:1px 1px 5px #ddd; box-shadow:1px 1px 5px #ddd;}
+.yffi{filter:alpha(Opacity=92);-moz-opacity:0.92;opacity: 0.92;} 
+.moball{ width:7.5rem; margin:0 auto; font-size:.24rem; padding:0 !important;}
+.cff{ color:#00549a;}
+input{ outline:none; -webkit-appearance: none; border-radius:0; font-size:.24rem;}
+.moball{ width:7.5rem; margin:0 auto; font-size:.24rem; padding:0 !important;}
+
+/*login*/
+.login-lam{ width: 100%; text-align: center; font-size: .48rem; color: #fff; line-height: 1rem; background: #cc4e3e; padding: 1rem 0;}
+.login-main{ width: 6rem; display: block; overflow: hidden; padding: .5rem; margin: -1rem auto 0 auto; border-radius: .3rem; background: #fff;}
+.login-text{ width: 5.5rem; height: 1rem; line-height: 1rem; padding: 0 .25rem; font-size: .3rem; outline: none; border: none; border-bottom: .02rem solid #eee; background: none; margin: .2rem auto 0 auto; display: block; overflow: hidden; -webkit-appearance: none; border-radius:0;}
+.login-btn{ width: 6rem; height: 1rem; line-height: 1rem; text-align: center; border: none; border-bottom: .03rem solid #edc676; background: #cc4e3e; font-size: .3rem; color: #fff; display: block; overflow: hidden; margin: 1rem auto 0 auto; outline: none; border-radius: .1rem;}
+
+.logos{ width: 3rem; margin: .8rem auto; display: block; overflow: hidden;}
+.logos img{ width: 100%; float: left;}
+
+.bottom-a{ width: 7.5rem; height: 1rem; line-height: 1rem; text-align: center; margin: 0 auto; position: absolute; bottom: 0;}
+.bottom-a a{ font-size: .3rem; text-align: center; color: #999; text-decoration: none; margin: 0 .1rem;}
+
+/*search*/
+.searchs{ width: 7.5rem; height: 1rem; display: block; overflow: hidden; margin: 0 auto;}
+.searchs-text{ width: 5.5rem; height: .7rem; line-height: .7rem; padding: 0 .25rem; font-size: .3rem; outline: none; border:none; text-align: center; background: #ddd; margin:.2rem auto 0 auto; display: block; overflow: hidden; border-radius:.5rem;}
+
+
+
+.tops{ width: 7.5rem; height: 1rem; display: block; overflow: hidden; position: fixed; z-index: 999; top: 0; background: #fff; border-bottom:.02rem solid #ddd;}
+.tops .goback{width: 2rem; height: 1rem; float: left; display: block; overflow: hidden;}
+.tops .goback img{ float: left; width: .3rem; height: .3rem; margin: .33rem .1rem 0 .25rem;}
+.tops .goback em{ font-style: normal; line-height: 1rem; color: #333; font-size: .3rem;}
+.tops font{ width: 3.5rem; line-height: 1rem; height: 1rem; text-align: center; display: block; overflow: hidden; font-size: .36rem; float: left;}
+.tops .tops-add{width: 1.75rem; height: 1rem; font-size: .30rem; padding-right: .25rem; line-height: 1rem; text-decoration: none; color: #00549a; float: left; text-align: right; display: block; overflow: hidden;}
+.tops-nbsp{ height: 1rem; display: block; overflow: hidden;}
+
+
+/*manage*/
+.manage-top{ width: 100%; background: #cc4e3e; height: 2.5rem; display: block; overflow: hidden;}
+.manage-top a{ width: 1rem; height: 1rem; float: right; margin-right: .25rem;}
+.manage-top a img{ width: .6rem; height: .6rem; padding: .2rem;}
+.manage-me{ width: 7rem; display: block; overflow: hidden; padding:0; margin: -1.5rem auto 0 auto; border-radius: .1rem; background: #fff; height: 2.2rem;}
+.manage-me-pic{ width: 1.2rem; height: 1.2rem; float: left; margin: -.5rem 0 0 .25rem; border: .02rem solid #eee; border-radius: 50%; display: block; overflow: hidden; position: absolute;}
+.manage-me-pic img{ width: 100%;}
+.manage-me-name{ width: 5.2rem; display: block; overflow: hidden; padding: 0 .25rem 0 1.55rem; height: .8rem;}
+.manage-me-name em{ font-size: .36rem; font-weight: bold; font-style: normal; line-height: .8rem;}
+.manage-me-num{ width: 7rem; display: block; overflow: hidden; margin:.3rem auto 0 auto;}
+.manage-me-num a{ width: 2.3rem; text-decoration: none; font-size: .24rem; float: left; text-align: center; line-height: .4rem; color: #999;}
+.manage-me-num em{ font-size: .36rem; font-weight: bold; font-style: normal; display: block; overflow: hidden; color: #333;}
+
+.manage-li{ width: 7rem; display: block; overflow: hidden; padding:0; margin: .2rem auto 0 auto; border-radius: .1rem; background: #fff;}
+.manage-li-lam{ line-height: .6rem; border-bottom: .02rem solid #eee; width: 6.5rem; display: block; overflow: hidden; margin: 0 auto;}
+.manage-li-cot{ line-height: 1rem; width: 6.5rem; display: block; overflow: hidden; margin: 0 auto;}
+.manage-li-cot em{ font-size: .36rem; font-weight: bold;}
+.manage-li-cot a{ float: right; color: #666; font-size: .3rem; text-decoration: none; font-weight: bold;}
+.yecz{ color: #68ca42!important;}
+
+.pwd-main{ width: 7.5rem; display: block; overflow: hidden; padding:0; margin: .2rem auto 0 auto; background: #fff;}
+.pwd-text{ width: 6rem; height: 1rem; line-height: 1rem; padding: 0 .25rem; font-size: .3rem; outline: none; border: none; border-bottom: .02rem solid #eee; background: none; margin: .2rem auto 0 auto; display: block; overflow: hidden; -webkit-appearance: none; border-radius:0;}
+.pwd-btn{ width: 6.5rem; height: 1rem; line-height: 1rem; text-align: center; border: none; border-bottom: .03rem solid #edc676; background: #cc4e3e; font-size: .3rem; color: #fff; display: block; overflow: hidden; margin: 1rem auto; outline: none; border-radius: .1rem;}
+
+
+.manage-a{ width: 100%; line-height: 1rem; display: block; overflow: hidden; text-decoration: none; font-size: .3rem; color: #333; background: #fff;}
+.manage-a font{ float: left; margin-left: .25rem;}
+.manage-a img{ float: right; width: .24rem; height: .24rem; margin: .38rem .25rem 0 0;}
+.manage-out{ width: 100%; line-height: 1rem; display: block; overflow: hidden; text-align: center; text-decoration: none; font-size: .3rem; color: #cc4e3e; background: #fff;}
+
+.hd-li{ width: 7rem; display: block; overflow: hidden; padding:0; margin: .2rem auto 0 auto; border-radius: .1rem; background: #fff;}
+.hd-li span{ width: 6.5rem; max-height: 3rem; display: block; overflow: hidden; margin: .25rem;}
+.hd-li img{ width: 100%;}
+.hd-li em{ width: 6.5rem; line-height: .6rem; font-size: .3rem; display: block; overflow: hidden; margin: 0 auto .1rem auto;}
+
+.hd-d-pic{ width: 7.5rem; display: block; overflow: hidden; padding:0; margin: 0 auto; background: #fff;}
+.hd-d-pic span{ width: 7.5rem; max-height: 5rem; display: block; overflow: hidden; margin: 0;}
+.hd-d-pic img{ width: 100%;}
+.hd-d-pic em{ width: 7rem; line-height: .6rem; font-size: .36rem; display: block; overflow: hidden; margin: .25rem auto .1rem auto;}
+
+.hd-d-li{ width: 7rem; display: block; overflow: hidden; padding:.15rem .25rem; margin: 0 auto; background: #fff; font-size: .3rem;}
+.hd-d-li span{ width: 2rem; line-height: .5rem; display: block; overflow: hidden; float: left;}
+.hd-d-li em{ width: 4.5rem; line-height: .5rem; display: block; overflow: hidden; float: right;}
+
+.sh-li{ width: 7rem; display: block; overflow: hidden; padding:0; margin: .2rem auto 0 auto; border-radius: .1rem; background: #fff;}
+.sh-li span{ width: 6.5rem; font-size: .3rem; display: block; overflow: hidden; margin: .25rem;}
+.sh-li em{ width: 6.5rem; line-height: .6rem; display: block; overflow: hidden; margin: 0 auto .1rem auto;}
+
+.sh-li-name{ width: 7rem; display: block; overflow: hidden; line-height: 1rem; text-align: center; font-size: .48rem; font-weight: bold; padding:.15rem .25rem; margin: 0 auto; background: #cc4e3e; color: #fff;}
+
+.sh-d-li{ width: 7rem; display: block; overflow: hidden; padding:.15rem .25rem; margin: 0 auto; background: #fff; font-size: .3rem;}
+.sh-d-li span{ width: 2rem; line-height: .5rem; display: block; overflow: hidden; float: left;}
+.sh-d-li em{ width: 4.5rem; line-height: .5rem; display: block; overflow: hidden; float: right;}
+
+.ye-top{ width: 7rem; display: block; overflow: hidden; padding:.15rem .25rem; margin: 0 auto; background: #fff; font-size: .3rem; line-height: 1rem;}
+.ye-top em{ display: block; overflow: hidden; font-size: .48rem; font-weight: bold; float: left;}
+.ye-top a{ display: block; overflow: hidden; float: right; padding: 0 .3rem; line-height: .7rem; margin: .15rem 0 0 0; background: #cc4e3e; color: #fff; border-radius: .1rem;}
+
+.ye-main{ width: 7.5rem; display: block; overflow: hidden; padding:0; margin: 0 auto; background: #fff;}
+.ye-text{ width: 6rem; height: 1.5rem; line-height: 1.5rem; padding: 0 .25rem; font-size: .48rem; outline: none; border: none; border-bottom: .02rem solid #eee; background: none; margin: .2rem auto 0 auto; display: block; overflow: hidden; -webkit-appearance: none; border-radius:0;}
+.ye-btn{ width: 6.5rem; height: 1rem; line-height: 1rem; text-align: center; border: none; border-bottom: .03rem solid #148f4c; background: #00af50; font-size: .3rem; color: #fff; display: block; overflow: hidden; margin: .5rem auto; outline: none; border-radius: .1rem;}
+
+.info-li{ width: 7rem; display: block; overflow: hidden; padding: .25rem; margin:.02rem auto 0 auto; background: #fff; font-size: .3rem;}
+.info-li span{ width: 2rem; line-height: .5rem; display: block; overflow: hidden; float: left;}
+.info-li em{ width: 4.5rem; line-height: .5rem; display: block; overflow: hidden; float: right; text-align: right;}
+.info-tx{ width: .8rem; height: .8rem; float: right; border-radius: 50%; display: block; overflow: hidden; margin: -.15rem 0;}
+
+.ye-details{ width: 100%; display: block; overflow: hidden;}
+.ye-li{ width: 7rem; display: block; overflow: hidden; padding: .15rem .25rem; margin: .2rem auto 0 auto; background: #fff;}
+.yl-left{ width: 5rem; display: block; overflow: hidden; float: left;}
+.yl-right{ width: 2rem; display: block; overflow: hidden; float: left; text-align: right;}
+.yl-bz{ width: 7rem; display: block; overflow: hidden; float: left; border-top: .02rem solid #eee; line-height: .3rem; padding: .2rem 0; font-size: .24rem; margin: .1rem auto 0 auto; color: #999;}
+.yl-time{ width: 100%; line-height: .5rem; display: block; overflow: hidden; font-size: .3rem;}
+.yl-tit{ width: 100%; line-height: .5rem; display: block; overflow: hidden;}
+.yl-pri{ width: 100%; line-height: .5rem; display: block; overflow: hidden; font-size: .3rem;}
+.yl-sta{ width: 100%; line-height: .5rem; display: block; overflow: hidden;}
+.yl-s{ color: #10B136;}
+.yl-z{ color: #cc4e3e;}
+
+.otr-li{ width: 7rem; display: block; overflow: hidden; padding:.25rem; margin: .2rem auto 0 auto; background: #fff;}
+.otr-li-pic{ width: 1.5rem; height: 1.5rem; display: block; overflow: hidden; float: left;}
+.otr-li-pic img{ width: 100%;}
+.otr-li-right{ width: 5.25rem; display: block; overflow: hidden; float: right;}
+.otr-li-time{ width: 100%; line-height: .5rem; display: block; overflow: hidden; font-size: .3rem;}
+.otr-li-name{ width: 100%; line-height: .5rem; display: block; overflow: hidden; font-size: .3rem;}
+.otr-li-pri{ width: 100%; line-height: .5rem; display: block; overflow: hidden;}
+.otr-li-pri span{ float: left; color: #999;}
+.otr-li-pri em{ float: right; color: #cc4e3e; font-size: .3rem;}
+
+.searchs02{ width: 7.5rem; height: 1rem; display: block; overflow: hidden; margin: 0 auto; background: #fff;}
+.searchs02-text{ width: 5rem; height: .7rem; line-height: .7rem; padding: 0 .25rem; font-size: .3rem; outline: none; border:none; text-align: center; background: #eee; margin:.15rem 0 0 .25rem; display: block; overflow: hidden; border-radius:.1rem; float: left;}
+.searchs02-btn{ width: 1.35rem; height: .7rem; line-height: .7rem; text-align: center; display: block; overflow: hidden; float: right; margin: .15rem .25rem 0 0;border-radius:.1rem; border: none; background: #cc4e3e; color: #fff; font-size: .3rem;}

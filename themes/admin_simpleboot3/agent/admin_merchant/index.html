@@ -1,0 +1,342 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="javascript:;">所有代理商</a></li>
+        <li><a href="{:url('AdminMerchant/add')}">添加代理商</a></li>
+    </ul>
+    <form class="well form-inline margin-top-20" method="post" action="{:url('AdminMerchant/index')}">
+        代理商名字:
+        <input type="text" class="form-control" name="user_nickname" style="width: 200px;"
+               value="{$user_nickname|default=''}" placeholder="请输入代理商名字">
+        <input type="submit" class="btn btn-primary" value="搜索" />
+        <a class="btn btn-danger" href="{:url('AdminMerchant/index')}">清空</a>
+    </form>
+    <form class="js-ajax-form" action="" method="post">
+        <div class="table-actions">
+            <!--<notempty name="category">-->
+
+            <!--</notempty>-->
+            <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminMerchant/examine')}" data-subcheck="true">启用
+            </button>
+            <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminMerchant/quExamine')}" data-subcheck="true">禁用
+            </button>
+            <button class="btn btn-danger btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminMerchant/delete')}" data-subcheck="true" data-msg="您确定删除吗？">
+                {:lang('DELETE')}
+            </button>
+        </div>
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="15">
+                    <label>
+                        <input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x">
+                    </label>
+                </th>
+                <notempty name="category">
+                    <th width="50">{:lang('SORT')}</th>
+                </notempty>
+                <th width="50">ID</th>
+                <th width="65">代理商头像</th>
+                <th width="65">代理商姓名</th>
+                <th width="65">电话</th>
+                <th width="65">余额</th>
+                <th width="65">未使用二维码数量</th>
+                <th width="65">状态</th>
+                <th width="130">地址</th>
+                <th width="90">操作</th>
+            </tr>
+            </thead>
+            <notempty name="data">
+                <foreach name="data" item="vo">
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x" name="ids[]"
+                                   value="{$vo.id}" title="ID:{$vo.id}">
+                        </td>
+                        <td><b>{$vo.id}</b></td>
+                        <td>
+                            <img src="{:cmf_get_image_preview_url($vo['avatar'])}"
+                                 width="50" style="cursor: pointer"/>
+                        </td>
+                        <td>{$vo.user_nickname}</td>
+                        <td>{$vo.mobile}</td>
+                        <td>{$vo.balance}</td>
+                        <td>{$vo.sum_code}</td>
+                        <td>
+                            <if condition="$vo.user_status==0">
+                                <a data-toggle="tooltip" title="已禁用"><i class="fa fa-close"></i></a>
+                                <elseif condition="$vo.user_status==1"/>
+                                <a data-toggle="tooltip" title="正常"><i class="fa fa-check"></i></a>
+                                <else/>
+                                <a data-toggle="tooltip" title="未验证">未验证</a>
+                            </if>
+                        </td>
+                        <td>{$vo.address}</td>
+                        <td>
+                            <a href="{:url('AdminMerchant/edit',array('id'=>$vo['id']))}">{:lang('EDIT')}</a>
+                            <if condition="$vo.user_status==0">
+                                <a data-toggle="tooltip" title="已禁用" class="user_examine" data-id="{$vo.id}" style="cursor: pointer">启用</a>
+                                <elseif condition="$vo.user_status==1"/>
+                                <a data-toggle="tooltip" title="正常" class="user_quExamine" data-id="{$vo.id}" style="cursor: pointer">禁用</a>
+                                <a class="allocation" data-id="{$vo.id}" data-toggle="modal" data-target="#addCode"  data-whatever="" style="cursor: pointer">分配</a>
+                                <a class="recharge" data-id="{$vo.id}" data-toggle="modal" data-target="#recharge"  data-whatever="" style="cursor: pointer">充值</a>
+                            </if>
+                            <a href="{:url('AdminMerchant/delete',array('id'=>$vo['id']))}" class="js-ajax-delete">{:lang('DELETE')}</a>
+                        </td>
+                    </tr>
+                </foreach>
+            </notempty>
+            <tfoot>
+            <tr>
+                <th width="15"><label><input type="checkbox" class="js-check-all" data-direction="x"
+                                             data-checklist="js-check-x"></label></th>
+                <notempty name="category">
+                    <th width="50">{:lang('SORT')}</th>
+                </notempty>
+                <th width="50">ID</th>
+                <th width="65">代理商头像</th>
+                <th width="65">代理商姓名</th>
+                <th width="65">电话</th>
+                <th width="65">余额</th>
+                <th width="65">未使用二维码数量</th>
+                <th width="65">状态</th>
+                <th width="130">地址</th>
+                <th width="90">操作</th>
+            </tr>
+            </tfoot>
+        </table>
+
+        <div class="table-actions">
+            <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminMerchant/examine')}" data-subcheck="true">启用
+            </button>
+            <button class="btn btn-primary btn-sm js-ajax-submit" type="submit" data-action="{:url('AdminMerchant/quExamine')}" data-subcheck="true">禁用
+            </button>
+            <button class="btn btn-danger btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminMerchant/delete')}" data-subcheck="true" data-msg="您确定删除吗？">
+                {:lang('DELETE')}
+            </button>
+        </div>
+        <ul class="pagination">{$page|default=''}</ul>
+    </form>
+</div>
+<div data-backdrop="static" class="modal fade" id="addCode" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="exampleModalLabel">请填写您要分配的维码段</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <input type="hidden" class="form-control"  placeholder="请输入二维码的码段" id="agent_id">
+                        <label for="recipient-name" class="control-label">起始二维码段:<span style="color:red">(*请确认清楚!)</span></label>
+                        <input type="text" class="form-control" placeholder="请输入二维码的码段" id="start_num">
+                        <label for="recipient-name" class="control-label">截止二维码段:<span style="color:red">(*请确认清楚!)</span></label>
+                        <input type="text" class="form-control" placeholder="请输入二维码的码段" id="end_num">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="layui-btn site-demo-active qdagent" data-type="loading">确定</button>
+                <button type="button" class="layui-btn layui-btn-normal hider">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div data-backdrop="static" class="modal fade" id="recharge" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="exampleModalLabel">请填写你需要充值的金额</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <input type="hidden" class="form-control"  id="user_id">
+                        <input type="text" name="money" class="form-control" placeholder="请输入充值金额" id="recharge_money">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="layui-btn site-demo-active re_money " data-type="loading">确定</button>
+                <button type="button" class="layui-btn layui-btn-normal re_hider">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+<script>
+
+    function reloadPage(win) {
+        win.location.reload();
+    }
+    $(".hider").click(function () {
+//            addCode
+       $("#start_num").val('');
+        $("#end_num").val('');
+        $("#agent_id").val('');
+        $('#addCode').modal('hide')
+    });
+    $(".re_hider").click(function () {
+//            addCode
+        $("#recharge_money").val('');
+        $("#user_id").val('');
+        $('#recharge').modal('hide')
+    });
+    $(function () {
+        setCookie("refersh_time", 0);
+        Wind.use('ajaxForm', 'artDialog', 'iframeTools', function () {
+            //批量复制
+            $('.js-articles-copy').click(function (e) {
+                var ids = [];
+                $("input[name='ids[]']").each(function () {
+                    if ($(this).is(':checked')) {
+                        ids.push($(this).val());
+                    }
+                });
+
+                if (ids.length == 0) {
+                    art.dialog.through({
+                        id: 'error',
+                        icon: 'error',
+                        content: '您没有勾选信息，无法进行操作！',
+                        cancelVal: '关闭',
+                        cancel: true
+                    });
+                    return false;
+                }
+
+                ids = ids.join(',');
+                art.dialog.open("__ROOT__/index.php?g=portal&m=AdminGoods&a=copy&ids=" + ids, {
+                    title: "批量复制",
+                    width: "300px"
+                });
+            });
+            //批量移动
+            $('.js-articles-move').click(function (e) {
+                var ids = [];
+                $("input[name='ids[]']").each(function () {
+                    if ($(this).is(':checked')) {
+                        ids.push($(this).val());
+                    }
+                });
+
+                if (ids.length == 0) {
+                    art.dialog.through({
+                        id: 'error',
+                        icon: 'error',
+                        content: '您没有勾选信息，无法进行操作！',
+                        cancelVal: '关闭',
+                        cancel: true
+                    });
+                    return false;
+                }
+
+                ids = ids.join(',');
+                art.dialog.open("__ROOT__/index.php?g=portal&m=AdminGoods&a=move&old_term_id={$term.term_id|default=0}&ids=" + ids, {
+                    title: "批量移动",
+                    width: "300px"
+                });
+            });
+        });
+
+      $('.allocation').click(function () {
+       var agent_id=$(this).attr('data-id');
+         $("#agent_id").val(agent_id);
+       });
+
+      $(".qdagent").click(function () {
+          var start_num=$("#start_num").val();
+          var end_num=$("#end_num").val();
+          var agent_id=$("#agent_id").val();
+          if(!start_num){
+              layer.msg('起始二维码段不能为空')
+          }
+          if(!end_num){
+              layer.msg('截止二维码段不能为空')
+          }
+          $.ajax({
+              type: "POST",//方法类型
+              dataType: "json",//预期服务器返回的数据类型
+              url: "{:url('AdminMerchant/agentCode')}",//url
+              data:{agent_id:agent_id,start_num:start_num,end_num:end_num},
+              success: function (result) {
+                  if (result.code==0){
+                      layer.alert(result.msg);
+                  }else {
+                      layer.alert(result.msg);
+                      window.location.reload()//刷新当前页面.
+                  }
+
+              },
+          });
+      });
+        $('.recharge').click(function () {
+            var user_id=$(this).attr('data-id');
+            $("#user_id").val(user_id);
+        });
+      //充值
+      $(".re_money").click(function () {
+          var money = $("#recharge_money").val();
+          var id=$("#user_id").val();
+          var url='/agent/admin_merchant/index';
+          if (!js_check_fix_amount(money)) {
+              layer.msg('请输入正确的充值金额');
+              return false;
+          }
+          if (money > 10000) {
+              layer.msg('充值限额10000元');
+              return false;
+          }
+          $.post('{:url("user/Pay/sysPay")}',{money:money,id:id},function(re){
+              if(re.code == 1){
+                  window.location.href=url;
+              }else{
+                  layer.msg(re.msg);
+              }
+          },'json');
+      });
+        $(".user_examine").click(function () {
+            var id=$(this).attr('data-id');
+            $.ajax({
+                type: "POST",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                url: "{:url('AdminMerchant/examine')}",//url
+                data:{id:id},
+                success: function (result) {
+                    if (result.code==0){
+                        layer.alert(result.msg);
+                    }else {
+                        window.location.reload()//刷新当前页面.
+                    }
+
+                },
+            });
+        });
+        $(".user_quExamine").click(function () {
+            var id=$(this).attr('data-id');
+            $.ajax({
+                type: "POST",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                url: "{:url('AdminMerchant/quExamine')}",//url
+                data:{id:id},
+                success: function (result) {
+                    if (result.code==0){
+                        layer.alert(result.msg);
+                    }else {
+                        window.location.reload()//刷新当前页面.
+                    }
+
+                },
+            });
+        });
+    });
+</script>
+</body>
+</html>

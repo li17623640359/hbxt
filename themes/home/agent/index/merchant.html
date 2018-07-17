@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="商户列表" file="public@head"/>
+    <style>
+        .meinfo-pic {
+            width: auto;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+<!--header-->
+<!--header-->
+<include file="public@top"/>
+<div class="mains">
+    <div class="mes">
+        <include file="public@agentleft"/>
+        <div class="infos-right" >
+            <div class="mes-lam">商户列表</div>
+            <div class="layui-tab">
+                <form class="well form-inline margin-top-20" action="{:url('agent/Index/merchant')}" method="get">
+                    <input type="hidden" name="flow_step" class="flow_step">
+                    <div class="mat-type">&nbsp;&nbsp;
+                        <em>状态:</em>
+                        <select name="site" class="mat-t layui-input" style="width: 100px">
+                            <if condition="(isset($_GET['site']))">
+                                <option value="" >全部</option>
+                                <option value="audit" <if condition="$_GET['site']=='audit'" >selected="selected"</if> >待审核</option>
+                                <option value="normal" <if condition="$_GET['site']=='normal'" >selected="selected"</if>>正常</option>
+                                <option value="banned" <if condition="$_GET['site']=='banned'" >selected="selected"</if> >封禁</option>
+                                <else/>
+                                <option value=""  >全部</option>
+                                <option value="audit"  >待审核</option>
+                                <option value="normal">正常</option>
+                                <option value="banned" >封禁</option>
+                                <option value="reject">被驳回</option>
+                            </if>
+                        </select>
+                        <em>商户名称:</em>
+                        <input type="text" name="shop_name" value="{$_GET['shop_name']|default=''}" class="mat-t layui-input"
+                               placeholder="商户名称"
+                               style="width: 100px">
+                        <em>负责人:</em>
+                        <input type="text" name="principal" value="{$_GET['principal']|default=''}" class="mat-t layui-input" placeholder="负责人" style="width: 100px">
+                        <em>&nbsp;</em>
+                        <button type="submit" class="mat-b" style="width: 50px;">搜索</button>
+                        <a style=" width: 50px; height: 36px; line-height: 36px; text-align: center; margin-left: 10px; background: #ff5c3c; color: #fff; display: block; overflow: hidden; float: left;"
+                           href="{:url('agent/Index/merchant')}">清空</a>
+
+                    </div>
+                </form>
+                <ul class="layui-tab-title">
+                    <!--<li class="taber layui-this all"><a href="{:url('agent/index/balance',array('type'=>'all'))}">流水明细</a></li>-->
+                    <!--<li class="taber pay"><a href="{:url('agent/index/balance',array('type'=>'pay'))}">充值明细</a></li>-->
+                    <!--<li>资金明细-->
+                </ul>
+
+                <div class="layui-tab-content">
+                    <div class="layui-tab-item layui-show">
+                        <table class="layui-table">
+                            <colgroup>
+                                <col width="150">
+                                <col width="200">
+                                <col>
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <!--<th width="50">ID</th>-->
+                                <th width="100">商户名称</th>
+                                <th width="30">商户负责人</th>
+                                <th width="50">联系方式</th>
+                                <th width="60">状态</th>
+                                <th width="50">余额</th>
+                                <th width="150">未使用二维码数量</th>
+                                <th width="100">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <foreach name="user_shop" item="vo">
+                                <tr>
+                                    <td>{$vo.shop_name}</td>
+                                    <td>{$vo.principal}</td>
+                                    <td>{$vo.mobile}</td>
+                                    <td>
+                                        <if condition="($vo['site']=='normal')">
+                                            正常
+                                            <elseif condition="($vo['site']=='banned')"/>
+                                            封禁
+                                            <elseif condition="($vo['site']=='audit')"/>
+                                            待审核
+                                            <elseif condition="($vo['site']=='reject')"/>
+                                            被驳回
+                                        </if>
+                                    </td>
+                                    <td>{$vo.balance}</td>
+                                    <td>{$vo.number}</td>
+                                    <td>
+                                        <if condition="($vo['site']=='normal')">
+                                            <a style="color: #ff5c3c;"href="{:url('agent/Index/shopIndex',array('id'=>$vo.id))}">详情</a>
+                                            <a href="javascript:fenpei('{$vo.user_id}');" style="color: #ff5c3c;" >分配</a>
+                                            <elseif condition="($vo['site']=='audit') || ($vo['site']=='reject')"/>
+                                            <a style="color: #ff5c3c;"href="{:url('agent/Index/shopIndex',array('id'=>$vo.id))}">详情</a>
+                                            <a style="color: #ff5c3c;"href="{:url('agent/Index/shopEdit',array('id'=>$vo.id))}">编辑</a>
+                                        </if>
+                                        <!--<a href="{:url('Activity/delete',array('id'=>$vo['id']))}" class="js-ajax-delete">{:lang('DELETE')}</a>-->
+                                    </td>
+                                </tr>
+                            </foreach>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination">{$page|default=''}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!--Footer-->
+<include file="public@foot"/>
+<script type="text/javascript">
+    function fenpei(id) {
+        layer.open({
+            type: 1,
+            title: '码值分配',
+            closeBtn: 0,
+            area:"600px",
+            shadeClose: true,
+//            skin: 'yourclass',
+//            content: "<input id='code_start' type='number' name='a'><input id='code_end' type='number' name='b'>",
+            content:'<div class="layui-form-item" >\n' +
+            '    <label class="layui-form-label" style="text-align: center;">起始码值</label>\n' +
+            '    <div class="layui-input-block">\n' +
+            '      <input type="number" name="title" id="code_start" placeholder="请输入起始码值" autocomplete="off" class="layui-input" style="width: 90%">\n' +
+            '    </div>\n' +
+            '  </div>' +
+            '<div class="layui-form-item">\n' +
+            '    <label class="layui-form-label" style="text-align: center;" >结束码值</label>\n' +
+            '    <div class="layui-input-block">\n' +
+            '      <input type="number" id="code_end" name="title" placeholder="请输入结束码值" autocomplete="off" class="layui-input" style="width: 90%">\n' +
+            '    </div>\n' +
+            '  </div>',
+            btn: ['确定', '取消'], //只是为了演示
+            yes: function () {
+                var start = $("#code_start").val();
+                var end = $("#code_end").val();
+                var user_id=id;
+                if (start.length == 0) {
+//                layer.msg('起始码值不能为空');
+                    layer.tips('起始码值不能为空','#code_start',{tips: [3,'#E74C3C']});
+                    return false;
+                }
+                if (end.length == 0) {
+//                layer.msg('起始码值不能为空');
+                    layer.tips('结束码值不能为空','#code_end',{tips: [3,'#E74C3C']});
+                    return false;
+                }
+
+                $.ajax({
+                    url:"{:url('agent/Index/shopCode')}",
+                    type:'post',
+                    dataType:'json',
+                    data:{
+                        start_num:start,
+                        end_num:end,
+                        user_id:user_id
+                    },
+                    success:function (data) {
+                        if (data.code==1){
+                            layer.msg('分配成功');
+                            parent.location.reload();
+                        }else{
+                            layer.msg(data.msg);
+                        }
+                    }
+                })
+            }
+            , btn2: function () {
+                layer.closeAll();
+            }
+        });
+    }
+</script>
+</body>
+<html>

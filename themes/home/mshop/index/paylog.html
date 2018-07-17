@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="充值记录" file="mobile_public@head"/>
+</head>
+<body>
+<div class="moball">
+    <!--login-->
+    <div class="tops"><a class="goback" href="{:url('mshop/Index/index')}">
+        <img src="__TMPL__/mobile_public/img/left.png"/><em>返回</em></a><font>充值记录</font></div>
+    <div class="tops-nbsp"></div>
+
+    <div class="ye-top">
+        <em>￥{$user['balance']}</em>
+        <a href="{:url('mshop/Index/windup')}">充值</a>
+    </div>
+
+    <div class="ye-details" id="datalist">
+
+    </div>
+</div>
+</body>
+<include file="mobile_public@footer"/>
+<script>
+    layui.use('flow', function () {
+        var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
+        var flow = layui.flow;
+        flow.load({
+            elem: '#datalist', //指定列表容器
+            done: function (page, next) { //到达临界点（默认滚动触发），触发下一页
+                var lis = [];
+                //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+                $.ajax({
+                    type: 'POST', dataType: 'json',
+                    url: '/mshop/index/paylog',
+                    data: {page: page},
+                    success: function (res) {
+                        console.log(res);
+                        //假设你的列表返回在data集合中
+                        layui.each(res.data.list.data, function (index, item) {
+                            var pay_log = '';
+                            if (item.in_type == 1) {
+                                pay_log = '微信支付';
+                            } else if (item.in_type == 2) {
+                                pay_log = '支付宝支付';
+                            } else if (item.in_type == 3) {
+                                pay_log = '平台充值';
+                            }
+                            var site = '';
+                            if (item.status == 0) {
+                                site = '未完成';
+                            } else {
+                                site = '已完成'
+                            }
+                            var create_time = timestampToTime(item.create_time);
+                            lis.push(
+                                '<div class="ye-li">' +
+                                    '<div class="yl-left">' +
+                                        '<div class="yl-time">' + create_time + '</div>' +
+                                        '<div class="yl-tit">' + pay_log + '</div>' +
+                                    '</div>' +
+                                    '<div class="yl-right yl-s">' +
+                                        '<div class="yl-pri">￥'+item.in_money+'</div>'+
+                                        '<div class="yl-sta">充值</div>'+
+                                    '</div>' +
+                                    '<div class="yl-bz">'+pay_log+'</div>'+
+                                '</div>'
+                            );
+                        });
+                        //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                        //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                        next(lis.join(''), page < res.data.list.last_page);
+                    }
+                });
+            }
+        });
+    });
+
+    function timestampToTime(timestamp) {
+        var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+        Y = date.getFullYear() + '-';
+        M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+        D = date.getDate() + ' ';
+        h = date.getHours() + ':';
+        m = date.getMinutes() + ':';
+        s = date.getSeconds();
+        return Y + M + D + h + m + s;
+    }
+
+</script>
+</html>

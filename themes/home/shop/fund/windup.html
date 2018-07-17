@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="余额管理" file="public@head"/>
+    <style>
+        .meinfo-pic {
+            width: auto;
+            float: left;
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+    </style>
+</head>
+<body>
+<!--header-->
+<include file="public@top"/>
+<div class="mains">
+    <include file="public@shopLeft"/>
+    <div class="infos-right">
+        <form action="{:url('shop/Fund/setOrder')}" method="post">
+            <div class="subs">
+                <!--<div class="subs-lam">请填写订单信息</div>-->
+                <div class="mes-lam">订单信息</div>
+                <div class="subs-li">
+                    <!--<div class="subs-tit">订单信息</div>-->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">充值金额：</label>
+                        <div class="layui-input-inline">
+                            <input type="number" name="money" required lay-verify="required" placeholder="请输入充值金额"
+                                   autocomplete="off" class="money layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">￥</div>
+                    </div>
+                </div>
+                <div class="subs-li">
+                    <div class="subs-tit">选择支付方式</div>
+                    <div class="payli">
+                        <input type="radio" name="paymode" value="2" checked="checked" id="pay_alipay">
+                        <label for="2">
+                            <img src="__TMPL__/public/img/alipay.png"/>
+                            <em>支付宝支付</em>
+                        </label>
+                    </div>
+                    <div class="payli">
+                        <input type="radio" name="paymode" value="1" id="pay_weixinpay">
+                        <label for="pay_weixinpay">
+                            <img src="__TMPL__/public/img/weixinpay.png"/>
+                            <em>微信支付</em>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carts-sub" style="width: auto;">
+                <div style="float: right;">
+                    <!--<button class="carts-btn js-ajax-submit">去支付</button>-->
+                    <a class="carts-btn" href="{:url('shop/Fund/index')}">返回</a>
+                    <button class="carts-btn" type="button" onclick="pay(this)">去支付</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<include file="public@foot"/>
+</body>
+<script>
+
+    function pay(t) {
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            var pay_type = $('[name="paymode"]:checked').val();
+            var money = $(".money").val();
+            if (money.length == 0) {
+                layer.msg('金额不能为空');
+                return false;
+            }
+            $.ajax({
+                type: "POST",
+                url: "{:url('shop/Fund/setOrder')}",
+                async: false,
+                dataType:'json',
+                data: {pay_type: pay_type, money: money},
+                success: function (data) {
+
+                    if (data.status==1){
+                        //成功
+                        window.location.href = "{:url('shop/Fund/pay')}?&orderid=" + data.value;
+                    }else{
+                        //失败
+                        layer.msg(data.msg);
+                    }
+
+//                    if (data.code == 1) {
+//                        $(t).attr('disabled', true);
+//                        window.location.href = "{:url('shop/Fund/pay')}?type=" + pay_type + "&orderid=" + data.msg;
+//                    } else {
+//                        layer.msg(data.msg);
+//                    }
+                }
+            })
+        });
+    }
+
+</script>
+</html>

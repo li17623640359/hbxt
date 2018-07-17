@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="商户管理" file="mobpublic@header"/>
+</head>
+<body>
+<div class="moball">
+    <!--login-->
+    <div class="tops"><a class="goback" href="{:url('mob/Index/index')}"><img
+            src="__TMPL__/mobpublic/assets/img/left.png"/><em>返回</em></a><font>商户列表</font></div>
+    <div class="tops-nbsp"></div>
+    <div class="searchs">
+        <input type="text" class="searchs-text" name="shop_name" placeholder="搜索"/>
+    </div>
+
+    <div id="datalist">
+
+    </div>
+
+</div>
+</body>
+<include file="mobpublic@scripts"/>
+<script>
+    layui.use('flow', function () {
+        var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
+        var flow = layui.flow;
+        flow.load({
+            elem: '#datalist', //指定列表容器
+            done: function (page, next) { //到达临界点（默认滚动触发），触发下一页
+                var lis = [];
+                //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+                $.ajax({
+                    type: 'POST', dataType: 'json',
+                    url: '/mob/shop/index',
+                    data: {page: page},
+                    success: function (res) {
+                        console.log(res);
+                        //假设你的列表返回在data集合中
+                        layui.each(res.data.list.data, function (index, item) {
+                            var a='';
+                            if(item.site=='banned'){
+                                a+='<a href='+"{:url('mob/shop/banned')}?id="+item.id+'>取消禁用</a>';
+                            }else if(item.site=='audit'){
+                                a+='<a href='+"{:url('mob/shop/audit')}?id="+item.id+'>审核</a>';
+//                                a+='<a href='+"{:url('mob/shop/audit')}&id="+item.id+''>审核</a>';
+                            }else if(item.site=='reject'){
+                                a+='<a href='+"{:url('mob/shop/audit')}?id="+item.id+'>重新审核</a>';
+//                                a+='<a href='+"{:url('mob/shop/audit')}&id="+item.id+''>审核</a>';
+                            }else if(item.site=='normal'){
+                                a+='<a href="javascript:;">禁用</a>';
+                                a+='<a href="javascript:;">分配</a>';
+                            }
+
+                            lis.push(
+                              '<div href="sh-detals.html" class="sh-list">' +
+                                '            <div class="sh-list-name"><a href='+"{:url('mob/shop/detals')}"+'?id='+item.id+'>'+item.shop_name+'</a></div>' +
+                                '            <div class="sh-list-peo"><a href="javascript:;">'+item.principal+'</a></div>' +
+                                '            <div class="sh-list-other">' +
+                                '                <a href='+"{:url('mob/shop/detals')}"+'?id='+item.id+'>查看详情</a>' +
+                                '                <a href='+"{:url('mob/shop/delete')}"+'?id='+item.id+'>删除</a>' +
+                                                    a+
+                                '            </div>' +
+                                '        </div>'
+                            );
+
+                        });
+                        //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                        //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                        next(lis.join(''), page < res.data.list.last_page);
+                    }
+                });
+            }
+        });
+    });
+</script>
+</html>

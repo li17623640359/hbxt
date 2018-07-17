@@ -1,0 +1,29 @@
+<div class="header">
+    <div class="tops">
+        <div class="tops-cen">
+            <div class="tops-left fltl">
+                <font>欢迎来到微动分享！</font>
+                <if condition="cmf_is_user_login()">
+                    <a href="{:url('Index/index')}">
+                        <if condition="$user.avatar">
+                            <img src="{:cmf_get_image_preview_url($user.avatar)}" alt="">
+                            <else/>
+                            <img src="__TMPL__/public/img/default.png">
+                        </if>
+                        <if condition="$user.user_nickname">
+                            <em>{$user.user_nickname}</em>
+                            <else/>
+                            <em>{:cmf_mobile_fomart($user.mobile)}</em>
+                        </if>
+                        <em></em>
+                    </a>
+                    <else/>
+                </if>
+                </if>
+            </div>
+            <div class="tops-right fltr alla">
+                <a href="{:url('shop/Login/logoOut')}">退出</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,191 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:url('AdminShop/index')}">商户管理</a></li>
+        <li><a href="{:url('AdminShop/add')}">添加商户</a></li>
+        <li class="active"><a href="javascript:;">编辑商户</a></li>
+    </ul>
+    <div class="row margin-top-20">
+        <div class="col-md-2">
+            <div class="list-group">
+                <!--<a class="list-group-item" href="#A" data-toggle="tab">基本属性</a>-->
+                <!--<a class="list-group-item" href="#B" data-toggle="tab">SEO设置</a>-->
+                <!--<a class="list-group-item" href="#C" data-toggle="tab">模板设置</a>-->
+            </div>
+        </div>
+        <div class="col-md-6">
+            <form class="js-ajax-form" action="{:url('AdminShop/editPost')}" method="post">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="A">
+                        <div class="form-group">
+                            <label for="input-name"><span class="form-required">*</span>商铺名称</label>
+                            <div>
+                                <input type="text" class="form-control" value="{$res['shop_name']}" id="input-name" name="shop_name">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-description"><span class="form-required">*</span>商户logo</label>
+                            <div>
+                                <input type="hidden" name="shop_logo" value="{$res['shop_logo']}" class="form-control"
+                                       id="js-thumbnail-input">
+                                <div>
+                                    <a href="javascript:uploadOneImage('图片上传','#js-thumbnail-input');">
+                                        <if condition="empty($res['shop_logo'])">
+                                                <img src="__TMPL__/public/assets/images/default-thumbnail.png"
+                                                     id="js-thumbnai2-input-preview"
+                                                     width="135" style="cursor: pointer"/>
+                                            <else/>
+                                                <img src="{:cmf_get_image_preview_url($res['shop_logo'])}"
+                                                     id="js-thumbnail-input-preview"
+                                                     width="135" style="cursor: pointer"/>
+                                        </if>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="principal"><span class="form-required">*</span>商户负责人</label>
+                            <div>
+                                <input type="text" class="form-control" value="{$res['principal']}" id="principal" name="principal">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="principal"><span class="form-required">*</span>联系方式</label>
+                            <div>
+                                <input type="text" class="form-control" value="{$res['mobile']}" disabled="disabled" id="mobile" name="mobile">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-description"><span class="form-required">*</span>营业执照</label>
+                            <div>
+                                <input type="hidden" name="certificate" value="{$res['certificate']}" class="form-control"
+                                       id="js-thumbnai2-input">
+                                <div>
+                                    <a href="javascript:uploadOneImage('图片上传','#js-thumbnai2-input');">
+                                        <if condition="(empty($res['certificate']))">
+                                            <img src="__TMPL__/public/assets/images/default-thumbnail.png"
+                                                 id="js-thumbnai2-input-preview"
+                                                 width="135" style="cursor: pointer"/>
+                                            <else/>
+                                            <img src="{:cmf_get_image_preview_url($res['certificate'])}"
+                                                 id="js-thumbnai2-input-preview"
+                                                 width="135" style="cursor: pointer"/>
+                                        </if>
+
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-field"><span class="form-required">*</span>商户地址</label>
+                            <div>
+                                <select name="province" id="province" style=" width: 150px">
+                                    <option value="" selected>省份/直辖市</option>
+                                    <volist name="regions" id="vo">
+                                        <if condition="($res['province']==$vo['id'])">
+                                                <option value="{$vo.id}" selected="selected">{$vo.name}</option>
+                                            <else/>
+                                                <option value="{$vo.id}">{$vo.name}</option>
+                                        </if>
+
+                                    </volist>
+                                </select>
+                                <select name="city" id="city" style=" width: 150px">
+                                    <option value="">市/县</option>
+                                    <foreach name="city" item="vo">
+                                        <if condition="($res['city']==$vo['id'])">
+                                                <option value="{$vo.id}" selected="selected">{$vo.name}</option>
+                                            <else/>
+                                                <option value="{$vo.id}">{$vo.name}</option>
+                                        </if>
+                                    </foreach>
+                                </select>
+                                <select name="district" id="town" style=" width: 150px">
+                                    <option value="">镇/区</option>
+                                    <foreach name="town" item="vo">
+                                        <if condition="($res['district']==$vo['id'])">
+                                            <option value="{$vo.id}" selected="selected">{$vo.name}</option>
+                                            <else/>
+                                            <option value="{$vo.id}">{$vo.name}</option>
+                                        </if>
+                                    </foreach>
+                                </select>
+                                <div>
+                                    <input type="text" value="{$res['address']}" placeholder="详细地址" class="form-control" id="address"
+                                           name="address">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-description">商户简介</label>
+                            <div>
+                                <textarea class="form-control" name="synopsis" id="input-description">{$res['synopsis']}</textarea>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="tab-pane" id="B">
+
+                    </div>
+                    <div class="tab-pane" id="C">
+
+                    </div>
+                </div>
+                <input type="hidden" name="id" value="{$res['id']}">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary js-ajax-submit">{:lang('SAVE')}</button>
+                    <a class="btn btn-default" href="{:url('AdminShop/index')}">{:lang('BACK')}</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="__STATIC__/js/admin.js"></script>
+</body>
+<script>
+    $(function () {
+        $("#province").change(function () {
+            var city = $("#province").val();
+            var html = '';
+            var htmll = '';
+            $("#city").children('option:gt(0)').remove();
+            $("#town").children('option:gt(0)').remove();
+            $("#address").val('');
+            $.post("{:url('AdminShop/address')}", {id: city}, function (data) {
+                console.log(data)
+                $("#city option").remove();
+                html += '<option value="">市/县</option>'
+                $("#town option").remove();
+                htmll += '<option value="">镇/区</option>'
+                $("#town").append(htmll);
+                for (var i = 0; i < data.length; i++) {
+                    html += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
+                }
+                $("#city").append(html);
+            }, 'json')
+        })
+        $("#city").change(function () {
+            var town = $("#city").val();
+            var html = '';
+            $("#town").children('option:gt(0)').remove();
+            $("#address").val('');
+            $.post("{:url('AdminShop/address')}", {id: town}, function (data) {
+                $("#town option").remove();
+                html += '<option value="">镇/区</option>'
+                for (var i = 0; i < data.length; i++) {
+                    html += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
+                }
+                $("#town").append(html);
+            }, 'json')
+        })
+    })
+</script>
+</html>

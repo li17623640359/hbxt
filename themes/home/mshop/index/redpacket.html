@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <include title="红包详情" file="mobile_public@head"/>
+</head>
+<body>
+<div class="moball">
+    <div class="tops"><a class="goback" href="{:url('mshop/Index/details',array('id'=>$one['id']))}" style="cursor: pointer"><img
+            src="__TMPL__/mobile_public/img/left.png"/><em>返回</em></a><font>{$activity_type[$one.type]}</font>
+    </div>
+    <div class="tops-nbsp">
+    </div>
+    <input type="hidden" id="hb_id" value="{$one['id']}">
+    <if condition="($one['type']==2)">
+        <if condition="(!empty($res))">
+            <div class="searchs" style="text-align: center;line-height: 50px;">
+                <a href="javascript:parent.imagePreviewDialog('{:cmf_get_image_preview_url($res['code_img'])}')">
+                    <img width="50" src="{:cmf_get_image_preview_url($res['code_img'])}">
+                </a>
+            </div>
+        </if>
+    </if>
+    <if condition="($one['type']==1)">
+        <div class="searchs">
+            <form action="">
+            <input type="search" class="searchs-text code_num" value="{$code_num}" name="code_num" placeholder="输入内容"/>
+            </form>
+        </div>
+    </if>
+
+    <div id="datalist">
+
+    </div>
+</div>
+<include file="mobile_public@footer"/>
+<script>
+    layui.use('flow', function () {
+        var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
+        var flow = layui.flow;
+        var hb_id = $("#hb_id").val();
+        var code_num=$(".code_num").val();
+        var type="{$one['type']}";
+        flow.load({
+            elem: '#datalist', //指定列表容器
+            done: function (page, next) { //到达临界点（默认滚动触发），触发下一页
+                var lis = [];
+                //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+                $.ajax({
+                    type: 'POST', dataType: 'json',
+                    url: "{:url('mshop/Index/redPacket')}",
+                    data: {page: page, id: hb_id,code_num:code_num},
+                    success: function (res) {
+                        //假设你的列表返回在data集合中
+                        console.log(res);
+                        layui.each(res.data.list.data, function (index, item) {
+                            var img = '';
+                            var money = '';
+                            var end_time = '';
+                            if (item.code_img != '' && item.code_img != undefined) {
+                                img = '<div class="otr-li-pic"><img src="__ROOT__/upload/' + item.code_img + '" /></div>';
+                            }
+                            if (item.end_time!='' && item.end_time!=undefined) {
+                                money = '￥'.item.money;
+                                end_time = timestampToTime(item.end_time);
+                            }
+
+                            if (item.user_name == '' || item.user_name == undefined) {
+                                item.user_name = '暂未领取';
+                            }
+
+                            if (type==1){
+                                lis.push(
+                                    '<div class="otr-li">' +
+                                    img+
+                                    '            <div class="otr-li-right">' +
+                                    '                <div class="otr-li-time">Code:'+item.code_num+'</div>' +
+                                    '                <div class="otr-li-name">'+item.user_name+'</div>' +
+                                    '                <div class="otr-li-pri"><span>'+end_time+'</span><em>'+money+'</em></div>' +
+                                    '            </div>' +
+                                    '        </div>'
+                                )
+                            }else{
+                                lis.push(
+                                    '<div class="otr-li">' +
+                                    img+
+                                    '            <div class="otr-li-right" style="float: left;">' +
+                                    '                <div class="otr-li-time">Code:'+item.code_num+'</div>' +
+                                    '                <div class="otr-li-name">'+item.user_name+'</div>' +
+                                    '                <div class="otr-li-pri"><span>'+end_time+'</span><em>'+money+'</em></div>' +
+                                    '            </div>' +
+                                    '        </div>'
+                                )
+                            }
+                        });
+                        //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                        //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                        next(lis.join(''), page < res.data.list.last_page);
+                    }
+                });
+            }
+        });
+    });
+    function timestampToTime(timestamp) {
+        var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+        Y = date.getFullYear() + '-';
+        M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+        D = date.getDate() + ' ';
+        h = date.getHours() + ':';
+        m = date.getMinutes() + ':';
+        s = date.getSeconds();
+        return Y + M + D + h + m + s;
+    }
+</script>
+
+</body>
+</html>

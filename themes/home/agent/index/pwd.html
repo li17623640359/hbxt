@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="密码修改" file="public@head"/>
+    <style>
+        .mesadr-cot {
+            z-index: 1000;
+        }
+    </style>
+
+</head>
+<body>
+
+<!--header-->
+<include file="public@top"/>
+<div class="mains">
+    <div class="mes">
+        <include file="public@agentleft"/>
+        <div class="infos-right">
+            <div class="wrap js-check-wrap">
+                <form class="js-ajax-form" action="{:url('Index/pwd')}" method="post">
+                    <div class="mes-lam">密码修改</div>
+                    <div class="mesli">
+                        <div class="mes-font">旧密码：</div>
+                        <input type="password" name="old_password" class="mes-text"  />
+                    </div>
+                    <div class="mesli">
+                        <div class="mes-font">设置新密码：</div>
+                        <input type="password" name="password" class="mes-text"  />
+                    </div>
+                    <div class="mesli">
+                        <div class="mes-font">确认新密码：</div>
+                        <input type="password" name="repassword" class="mes-text"  />
+                    </div>
+                    <div class="mesli">
+                        <button class="mes-btn js-ajax-submit" type="submit">确认修改</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Footer-->
+<include file="public@foot"/>
+<script>
+
+</script>
+</body>
+
+</html>

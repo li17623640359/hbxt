@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="商户中心" file="mobile_public@head"/>
+</head>
+<body>
+<div class="moball">
+    <!--login-->
+    <div class="manage-top"><a href="set.html"><img src="__TMPL__/mobile_public/img/set.png"/></a></div>
+    <div class="manage-me">
+        <div class="manage-me-pic">
+            <if condition="(!empty($shop['shop_logo']))">
+                <img src="{:cmf_get_image_preview_url($shop['shop_logo'])}"/>
+                <else/>
+                <img src="__TMPL__/mobile_public/img/default.png"/>
+            </if>
+        </div>
+        <div class="manage-me-name">
+            <em>{$shop['principal']}</em>
+        </div>
+        <div class="manage-me-num">
+            <a href="{:url('mshop/Index/record')}"><em>{$user['balance']}</em>余额</a>
+            <a href="{:url('mshop/Index/active')}"><em>{$count}</em>活动</a>
+        </div>
+    </div>
+    <div class="manage-li">
+        <div class="manage-li-lam">
+            <em>我的余额</em>
+        </div>
+        <div class="manage-li-cot">
+            <em>{$user['balance']}</em>
+            <a href="{:url('mshop/Index/windup')}" class="yecz">去充值&nbsp;&gt;</a>
+        </div>
+    </div>
+    <div class="manage-li">
+        <div class="manage-li-lam">
+            <em>我的活动</em>
+        </div>
+        <div class="manage-li-cot">
+            <em>{$count}</em>
+            <a href="{:url('mshop/Index/active')}">查看详细&nbsp;&gt;</a>
+        </div>
+    </div>
+    <div style="height: .5rem"></div>
+    <a href="{:url('shop/Login/logoOut')}" class="manage-out">退出登录</a>
+    <!--<div class="manage-main">
+        <a href="role.html"><font>角色管理</font><img src="img/right.png"/></a>
+        <a href="user.html"><font>用户管理</font><img src="img/right.png"/></a>
+        <a href="product.html"><font>商品管理</font><img src="img/right.png"/></a>
+    </div>-->
+
+</div>
+
+</body>
+<include file="mobile_public@footer"/>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="活动管理" file="mobpublic@header"/>
+</head>
+<body>
+<div class="moball">
+    <!--login-->
+    <div class="tops"><a class="goback" href="{:url('mob/Main/index')}"><img
+            src="__TMPL__/mobpublic/assets/img/left.png"/><em>返回</em></a><font>活动管理</font></div>
+    <div class="tops-nbsp"></div>
+    <div class="searchs">
+        <form action="">
+            <input type="search" name="activity_name" value="{$param['activity_name']|default=''}" id="activity_name"
+                   class="searchs-text" placeholder="搜索"/>
+        </form>
+    </div>
+
+    <div id="datalist">
+
+    </div>
+
+</div>
+</body>
+<include file="mobpublic@scripts"/>
+<script>
+    layui.use('flow', function () {
+        var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
+        var flow = layui.flow;
+        flow.load({
+            elem: '#datalist', //指定列表容器
+            done: function (page, next) { //到达临界点（默认滚动触发），触发下一页
+                var lis = [];
+                //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+                $.ajax({
+                    type: 'POST', dataType: 'json',
+                    url: "{:url('mob/MobActivity/index')}",
+                    data: {page: page, activity_name: $("#activity_name").val()},
+                    success: function (res) {
+                        console.log(res);
+                        //假设你的列表返回在data集合中
+                        layui.each(res.data.list.data, function (index, item) {
+                            if (item.activity_img == '' || item.activity_img == undefined) {
+                                item.activity_img = "<img src='__TMPL__/mobpublic/assets/img/default.png'>"
+                            } else {
+                                item.activity_img = '<img src="__ROOT__/upload/' + item.activity_img + '" />';
+                            }
+
+                            var user = '';
+                            if (item.user_nickname == '' || item.user_nickname == undefined) {
+                                user = item.mobile;
+                            } else {
+                                user = item.user_nickname;
+                            }
+
+                            var site = '';
+                            if (item.site == 1) {
+                                site = "<a class='site layui-btn-danger' style='color: white;' data-id='" + item.id + "' data-site='0' href='javascript:;'>关闭</a>"
+                            } else {
+                                site = "<a class='site layui-btn-danger' style='color: white;' data-id='" + item.id + "' data-site='1' href='javascript:;'>开启</a>"
+                            }
+                            var a = '';
+                            if (item.is_examine == 1) {
+
+                            } else {
+                                a = '<a class="layui-btn-danger"  style="color: white;" href="javascript:shenhe(' + item.id + ')">审核</alayui-btn-danger>';
+                            }
+
+                            lis.push(
+                                '<div class="hd-list">' +
+                                '            <div class="hd-list-pic"><a href="javascript:active(' + item.id + ')">' + item.activity_img + '</a></div>' +
+                                '            <div class="hd-list-tit"><a href="javascript:active(' + item.id + ')">' + item.activity_name + '</a></div>' +
+                                '            <div class="hd-list-name">' + user + '</div>' +
+                                '            <div class="hd-list-other">' +
+                                '                <a class="layui-btn-normal" style="color: white;" href="javascript:envElope(' + item.id + ')">红包详情</a>' +
+                                '                <a class="layui-btn-normal" style="color: white;" href="javascript:active(' + item.id + ')">活动详情</a>' +
+                                a +
+                                site +
+                                '                <alayui-btn-danger style="color: white;" href="javascript:del(' + item.id + ')">删除</alayui-btn-danger>' +
+                                '            </div>' +
+                                '        </div>'
+                            )
+
+                        });
+                        //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                        //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                        next(lis.join(''), page < res.data.list.last_page);
+                    }
+                });
+            }
+        });
+    });
+
+    //    审核
+    function shenhe(id) {
+        layer.confirm('确定要审核通过?', {icon: 3, title: '系统提示'}, function (index) {
+            $.post("{:url('mob/MobActivity/examine')}", {id: id}, function (re) {
+                layer.msg(re.msg);
+                window.location.reload();
+            }, 'json');
+            layer.close(index);
+        });
+    }
+
+    $(document).on('click', '.site', function () {
+        var id = $(this).attr('data-id');
+        var site = $(this).attr('data-site');
+        $.ajax({
+            url: "{:url('MobActivity/editSite')}",
+            type: 'post',
+            dataType: 'json',
+            data: {
+                id: id,
+                site: site
+            },
+            success: function (data) {
+                layui.use('layer', function () {
+                    layer.msg(data.msg);
+                    if (data.code == 1) {
+                        location.reload();
+                    }
+                });
+
+            }
+        })
+    });
+
+    //    删除
+    function del(id) {
+        layer.confirm('确定要删除?', {icon: 3, title: '系统提示'}, function (index) {
+            $.post("{:url('mob/MobActivity/delete')}", {id: id}, function (re) {
+                layer.msg(re.msg);
+                window.location.reload();
+            }, 'json');
+            layer.close(index);
+        });
+    }
+
+    function active(id) {
+        location.href = "{:url('mob/MobActivity/detals')}?id=" + id;
+    }
+
+    function envElope(id) {
+        location.href = "{:url('mob/MobActivity/details')}?id=" + id;
+    }
+</script>
+</html>

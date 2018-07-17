@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<include title="密码修改" file="mobile_public@head"/>
+</head>
+<body>
+<div class="moball">
+<!--login-->
+<div class="tops"><a class="goback" onclick="javascript:history.go(-1)"><img src="__TMPL__/mobile_public/img/left.png"/><em>返回</em></a><font>修改密码</font></div>
+<div class="tops-nbsp"></div>
+<div class="pwd-main">
+	<input type="password" name="old_password" placeholder="旧密码" class="pwd-text old_password" />
+	<input type="password" name="password" placeholder="设置新密码" class="pwd-text password" />
+	<input type="password" name="repassword" placeholder="确认新密码" class="pwd-text repassword" />
+	<button class="pwd-btn input xiugai">确认修改</button>
+</div>
+</div>
+</body>
+<include file="mobile_public@footer"/>
+<script>
+    $(function () {
+        layui.use('layer',function () {
+            var layer=layui.layer;
+            function is_empty(class_name,msg) {
+                var value=$("."+class_name+"").val();
+                if (value.length==0){
+                    layer.msg(msg);
+                    return false;
+                }
+            }
+
+            function is_pwd(class_name) {
+                var value=$("."+class_name+"").val();
+                if (value.length<6){
+                    layer.msg('密码长度不能少于6位');
+                }
+            }
+
+            $(".xiugai").click(function () {
+                var res=is_empty('old_password','旧密码不能为空');
+                if (res==false){
+                    return false;
+                }
+                pwd=$(".old_password").val();
+                $.ajax({
+                    url:"{:url('mshop/Index/isPwd')}",
+                    type:'post',
+                    dataType:'json',
+                    data:{
+                        pwd:pwd
+                    },
+                    success:function (data) {
+                        if (data.code==0){
+                            layer.msg(data.msg);
+                            return false;
+                        }else{
+                            var res=is_empty('password','新密码不能为空');
+                            if (res==false){
+                                return false;
+                            }
+                            var res=is_empty('repassword','重复新密码不能为空');
+                            if (res==false){
+                                return false;
+                            }
+                            var password=$(".password").val();
+                            var repassword=$(".repassword").val();
+                            $.ajax({
+                                url:"{:url('mshop/Index/updatePwd')}",
+                                type:'post',
+                                dataType:'json',
+                                data:{
+                                    old_password:pwd,
+                                    password:password,
+                                    repassword:repassword
+                                },
+                                success:function (data) {
+                                    if (data.code==1){
+                                        layer.msg('密码修改成功');
+                                        location.reload();
+                                    }else{
+                                        layer.msg(data.msg);
+                                    }
+                                }
+                            })
+                        }
+                    }
+                })
+            })
+        });
+    })
+</script>
+</html>

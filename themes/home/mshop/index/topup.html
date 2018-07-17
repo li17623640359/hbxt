@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="user-scalable=no">
+    <title>redpacket</title>
+    <include file="mobile_public@head"/>
+</head>
+<body>
+<div class="moball">
+    <!--login-->
+    <div class="tops"><a class="goback" onclick="javascript:history.go(-1)"><img
+            src="__TMPL__/mobile_public/img/left.png"/><em>返回</em></a><font>我的余额</font></div>
+    <div class="tops-nbsp"></div>
+
+    <div class="ye-top">
+        <em>￥{$user['balance']}</em>
+        <a href="{:url('mshop/Index/windup')}">充值</a>
+    </div>
+
+</div>
+</body>
+</html>

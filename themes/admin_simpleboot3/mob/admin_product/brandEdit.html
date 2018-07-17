@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>{$site_info.site_name}-编辑品牌</title>
+<include file="mobpublic@header" />
+<link rel="stylesheet" href="__TMPL__/mobpublic/assets/lay/css/layui.css"/>
+<script type="text/javascript" src="__TMPL__/mobpublic/assets/lay/layui.all.js"></script>
+</head>
+<body>
+<div class="moball">
+<!--tops-->
+<div class="tops"><a class="goback"><img src="__TMPL__/mobpublic/assets/img/left.png"/><em>返回</em></a><font>品牌管理</font></div>
+<div class="tops-nbsp"></div>
+<!--end tops-->
+<form class="js-ajax-form" action="{:url('mob/AdminProduct/brandEditPost')}" method="post">
+<div class="brand-add-li">
+	<font>品牌分类：</font>
+    <foreach name="brand" item="vo">
+        <input type="radio" id="bt_{$key}" name="b_type" value="{$key}" <if condition="$key eq $data.b_type">checked="checked"</if> class="bal-radio" /><label for="bt_{$key}">{$vo}</label>
+    </foreach>
+</div>
+<div class="brand-add-li">
+	<font>分类名称：</font>
+    <input type="hidden" name="id" value="{$data.id}">
+	<input type="text" name="b_name" value="{$data.b_name}" placeholder="输入品牌名称" class="bal-text" required/>
+</div>
+<div class="brand-add-li">
+	<font>分类配图：</font>
+    <input type="hidden" name="b_img_url" id="thumbnail" value="{$data.b_img_url}">
+    <a href="javascript:;" id="imgBtn">
+        <if condition="empty($data.b_img_url)">
+            <img id="photo-1-preview" src="__TMPL__/mobpublic/assets/img/default.png" width="200" />
+            <else/>
+            <img id="photo-1-preview" src="{:cmf_get_image_preview_url($data.b_img_url)}" width="200" />
+        </if>
+    </a>
+</div>
+<div class="brand-add-li">
+	<button class="bal-btn js-ajax-submit">确认保存</button>
+</div>
+</form>
+</div>
+<include file="mobpublic@scripts" />
+<script>
+layui.use('upload', function(){
+    var upload = layui.upload;
+    var uploadInst = upload.render({
+        elem: '#imgBtn', //绑定元素
+        url: '/mob/Index/upload', //上传接口
+        data:{path:'brand'},
+        size: 20000,
+        before: function(obj,file){ 
+            $(this.elem).val('上传中...');
+            $(this.elem).attr('disabled','disabled');
+            layer.load(); //上传loading
+        },
+        done: function(res, index, upload){
+            if(res.code !=1){
+                layer.msg(res.msg);
+                $(this.elem).val('重新上传');
+            }else{
+                $("#photo-1-preview").attr('src',"__ROOT__/upload/"+res.data.data.file);
+                $("#thumbnail").val(res.data.data.file);
+                $(this.elem).val('更换图片');
+            }
+            $(this.elem).removeAttr('disabled');
+            layer.closeAll('loading');
+        },
+        error: function(){
+          //请求异常回调
+            layer.closeAll('loading');
+            layer.msg('服务器繁忙');
+        }
+    });
+});
+</script>
+</body>
+</html>

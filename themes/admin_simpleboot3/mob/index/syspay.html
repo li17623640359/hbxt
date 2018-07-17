@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<include file="mobpublic@header" title="系统充值"/>
+<body>
+<div class="moball">
+    <!--login-->
+    <div class="tops"><a href="{$url}" class="goback"  style="cursor: pointer"><img src="__TMPL__/mobpublic/assets/img/left.png"/><em>返回</em></a><font>系统充值</font></div>
+    <div class="tops-nbsp"></div>
+    <input type="text" class="searchs-text" value="{$user_list.user_nickname}" style="width: 7rem;background:white;border-radius: 0;" disabled/>
+    <!--<input class="ye-text" type="text" name="uname" value="{$user_list.user_nickname}">-->
+    <input type="hidden" name="uid" value="{$user_list.id}">
+    <div class="ye-main">
+        <input type="text" name="money" placeholder="输入充值金额" class="ye-text" />
+        <button class="ye-btn input">系统充值</button>
+    </div>
+</div>
+</body>
+<include file="mobpublic@scripts"/>
+<script>
+    var payParam = null;
+    $().ready(function(){
+        $('.ye-btn').click(function(){
+            var money = $("input[name=money]").val();
+            var id=$("input[name=uid]").val();
+            var url=$('.goback').attr('href');
+            if(!js_check_is_wechat()){
+                layer.msg('请在微信内访问该页面');
+                return false;
+            }
+            if (!js_check_fix_amount(money)) {
+                layer.msg('请输入正确的充值金额');
+                return false;
+            }
+            if (money > 10000) {
+                layer.msg('充值限额10000元');
+                return false;
+            }
+            $.post('{:url("user/Pay/sysPay")}',{money:money,id:id},function(re){
+                if(re.code == 1){
+                    window.location.href=url;
+                }else{
+                    layer.msg(re.msg);
+                }
+            },'json');
+        });
+    });
+
+
+
+</script>
+</html>

@@ -1,0 +1,103 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:url('AdminMerchant/index')}">所有代理商</a></li>
+        <li class="active"><a >添加代理商</a></li>
+    </ul>
+    <div class="row margin-top-20">
+        <div class="col-md-6">
+            <form class="js-ajax-form" action="{:url('AdminMerchant/addPost')}" method="post">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="A">
+                        <div class="form-group">
+                            <label for="input-name">代理商姓名</label>
+                            <div>
+                                <input class="form-control" name="user_nickname" id="input-name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="input-password">登录密码</label>
+                            <div>
+                                <input type="password" class="form-control" name="user_pass" id="input-password" value="123456">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="input-email">邮箱</label>
+                            <div>
+                                <input type="email" class="form-control" name="user_email" id="input-email" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="input-phone">电话</label>
+                            <div>
+                                <input class="form-control" name="mobile" id="mobile">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="input-phone">起始码段<span class="form-required">(填写时请确认清楚)</span></label>
+                            <div>
+                                <input class="form-control" name="start_num" id="input-phone">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="input-phone">截止码段<span class="form-required">(填写时请确认清楚)</span></label>
+                            <div>
+                                <input class="form-control" name="end_num" id="input-phone">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="input-address">地址</label>
+                            <div>
+                                <input type="text" class="form-control" name="address" id="input-address">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="thumbnail">头像</label>
+                            <div >
+                                <input type="hidden" name="avatar" id="thumbnail" value="">
+                                <a href="javascript:uploadOneImage('图片上传','#thumbnail');">
+                                    <img src="__TMPL__/public/assets/images/default-thumbnail.png"
+                                         id="thumbnail-preview"
+                                         width="135" style="cursor: pointer"/>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary js-ajax-submit">{:lang('ADD')}</button>
+                    <a class="btn btn-default" href="{:url('AdminMerchant/index')}">{:lang('BACK')}</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="__STATIC__/js/admin.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#mobile").blur(function () {
+            var tel = $(this).val();
+            if (tel.length != 0) {
+                var isMobile = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1})|(17[0-9]{1}))+\d{8})$/;
+                if (!isMobile.exec(tel) && tel.length != 11) {
+                    //错误提示信息
+                    layer.msg('手机号格式错误');
+                    return false;
+                } else {
+                    $.post("{:url('AdminMerchant/is_mobile')}", {mobile: tel}, function (data) {
+                        if (data.code == 0) {
+                            layer.msg(data.msg);
+                            $("#mobile").val('');
+                        }
+                    })
+                }
+            }
+
+        });
+    })
+</script>
+</body>
+</html>

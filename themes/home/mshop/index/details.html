@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="user-scalable=no">
+    <include title="活动详情" file="mobile_public@head"/>
+</head>
+<body>
+<div class="moball">
+    <!--login-->
+    <div class="tops"><a class="goback" href="{:url('mshop/Index/active')}"><img
+            src="__TMPL__/mobile_public/img/left.png"/><em>返回</em></a><font>活动详情</font></div>
+    <div class="tops-nbsp"></div>
+    <div class="hd-d-pic">
+	<span>
+		<if condition="(empty($active['activity_img']))">
+		        <img src="__TMPL__/public/img/default-thumbnail.png"/>
+			<else/>
+			    <img src="{:cmf_get_image_preview_url($active['activity_img'])}">
+        </if>
+	</span>
+        <em>{$active['activity_name']}</em>
+    </div>
+    <div style="height: .2rem"></div>
+    <div class="hd-d-li">
+        <span>活动时间：</span>
+        <em>{:date('Y-m-d',$active['start_time'])}~{:date('Y-m-d',$active['end_time'])}</em>
+    </div>
+    <div class="hd-d-li">
+        <span>承办者：</span>
+        <em>{$active['principal']}</em>
+    </div>
+    <div class="hd-d-li">
+        <span>活动类型：</span>
+        <em>
+            <if condition="($active['type']==1)">
+                多二维码，单一红包
+                <else/>
+                单一维码，多红包
+            </if>
+        </em>
+    </div>
+    <div class="hd-d-li">
+        <span>时间限制：</span>
+        <em>
+            <if condition="(empty($active['is_limit']))">
+                不限制
+                <else/>
+                $active['is_limit']
+            </if>
+        </em>
+    </div>
+
+    <div class="hd-d-li">
+        <span>点击量：</span>
+        <em>
+            {$active.click_num}
+        </em>
+    </div>
+
+    <div style="height: .2rem"></div>
+    <div class="hd-d-li">
+        <span>红包金额：</span>
+        <em>￥{$active['total_money']}</em>
+    </div>
+    <div class="hd-d-li">
+        <span>红包数量：</span>
+        <em>{$active['packet_num']}</em>
+    </div>
+    <div class="hd-d-li">
+        <span>分配模式：</span>
+        <em>随机配置
+            {:config('packet_type')[$active['packet_type']]}
+        </em>
+    </div>
+    <if condition="((!empty($active['packet_ext'])) || (!empty($active['fixed_ext'])))">
+    <div class="hd-d-li">
+        <span>分配金额：</span>
+        <em>
+            <if condition="(!empty($active['packet_ext']))">
+                大额红包：
+                <foreach name="active['packet_ext']" item="vo">
+                    <br/>数量：{$vo['num']} 最小金额：{$vo['min']} 最大金额：{$vo['max']}
+                </foreach>
+            </if>
+            <if condition="(!empty($active['fixed_ext']))">
+                <br>定额红包：
+                <foreach name="active['fixed_ext']" item="vo">
+                    <br/>数量：{$vo['num']} 金额：{$vo['money']}
+                </foreach>
+            </if>
+
+        </em>
+    </div>
+    </if>
+
+    <div style="height: .2rem"></div>
+    <div class="hd-d-li">
+        <span>活动状态：</span>
+        <em>
+            <if condition="(empty($active['is_examine']))">
+                未审核
+                <else/>
+                审核
+            </if>
+        </em>
+    </div>
+
+    <div style="height: .2rem"></div>
+    <a href="{:url('mshop/Index/redPacket',array('id'=>$active['id']))}" data-href="" class="manage-a"><font>红包详情</font><img
+            src="__TMPL__/mobile_public/img/right.png"/></a>
+</div>
+</body>
+<include file="mobile_public@footer"/>
+</html>

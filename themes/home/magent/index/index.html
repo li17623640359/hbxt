@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<include title="首页" file="mobile_public@head"/>
+</head>
+<div class="moball">
+    <!--login-->
+    <div class="manage-top"><a href="{:url('magent/Index/set')}"><img src="__TMPL__/mobile_public/img/set.png"/></a></div>
+    <div class="manage-me">
+        <div class="manage-me-pic"><a href="{:url('magent/Index/info')}"><img src="{:cmf_get_image_preview_url($userinfo.avatar)}" /></a></div>
+        <div class="manage-me-name">
+            <em>{$userinfo.user_nickname}</em>
+        </div>
+        <div class="manage-me-num">
+            <a href="{:url('magent/Index/recharge')}"><em>{$userinfo.balance}</em>余额</a>
+            <a href="{:url('magent/Index/activity',array('id'=>$userinfo['id']))}"><em>{$count_activity}</em>活动</a>
+            <a href="{:url('magent/Index/shop')}"><em>{$count_shop}</em>商户</a>
+        </div>
+    </div>
+    <div class="manage-li">
+        <div class="manage-li-lam">
+            <em>余额管理</em>
+        </div>
+        <div class="manage-li-cot">
+            <em>{$userinfo.balance}</em>
+            <!--<a href="{:url('magent/Index/rechargeRecord')}" class="yecz">查看详细&nbsp;&gt;</a>-->
+            <a href="{:url('magent/Index/balance')}" class="yecz">查看详细&nbsp;&gt;</a>
+        </div>
+    </div>
+    <div class="manage-li">
+        <div class="manage-li-lam">
+            <em>活动列表</em>
+        </div>
+        <div class="manage-li-cot">
+            <em>{$count_activity}</em>
+            <a href="{:url('magent/Index/activity',array('id'=>$userinfo['id']))}">查看详细&nbsp;&gt;</a>
+        </div>
+    </div>
+    <div class="manage-li">
+        <div class="manage-li-lam">
+            <em>我的商户</em>
+        </div>
+        <div class="manage-li-cot">
+            <em>{$count_shop}</em>
+            <a href="{:url('magent/Index/shop')}">查看详细&nbsp;&gt;</a>
+        </div>
+    </div>
+    <div style="height: .5rem"></div>
+    <a href="{:url('shop/Login/logoOut')}" class="manage-out">退出登录</a>
+    <!--<div class="manage-main">
+        <a href="role.html"><font>角色管理</font><img src="img/right.png"/></a>
+        <a href="user.html"><font>用户管理</font><img src="img/right.png"/></a>
+        <a href="product.html"><font>商品管理</font><img src="img/right.png"/></a>
+    </div>-->
+</div>
+<include file="mobile_public@footer"/>
+</body>
+</html>

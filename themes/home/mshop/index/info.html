@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="商户信息" file="mobile_public@head"/>
+    <style>
+        .info-li input,img {
+            float: right;
+            border: none;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+<div class="moball">
+    <div class="tops"><a class="goback" href="{:url('mshop/Index/set')}"><img
+            src="__TMPL__/mobile_public/img/left.png"/><em>返回</em></a><font>商户信息</font></div>
+    <div class="tops-nbsp"></div>
+    <div style="height: .2rem"></div>
+    <form action="">
+        <div class="info-li">
+            <span>商户logo：</span>
+            <input type="hidden" name="shop_logo" id="activity" value="{$shop['shop_logo']|default=''}">
+            <a class="up-btn" id="activity_btn" style="cursor: pointer">
+                <if condition="(!empty($shop['shop_logo']))">
+                <img onclick="showDemoImg(this);" id="activity_img"  class="info-tx" src="{:cmf_get_image_preview_url($shop['shop_logo'])}"
+                     width="135"/>
+                    <else/>
+                    <img onclick="showDemoImg(this);" id="activity_img"  class="info-tx" src="__TMPL__/public/img/default.png"
+                         width="135"/>
+                </if>
+            </a>
+            <!--<if condition="(empty($shop['shop_logo']))">-->
+            <!--<img src="__TMPL__/public/img/default.png" class="info-tx">-->
+            <!--<else/>-->
+            <!--<img src="{:cmf_get_image_preview_url($shop['shop_logo'])}" class="info-tx">-->
+            <!--</if>-->
+        </div>
+        <div class="info-li">
+            <span>商户名称：</span>
+            <!--<em>{$shop['shop_name']}</em>-->
+            <input type="text" name="shop_name" value="{$shop['shop_name']|default=''}">
+        </div>
+        <div class="info-li">
+            <span>商户负责人：</span>
+            <!--<em>{$shop['principal']}</em>-->
+            <input type="text" name="principal" value="{$shop['principal']|default=''}">
+        </div>
+        <div class="info-li">
+            <span>商户营业执照：</span>
+            <img src="{:cmf_get_image_preview_url($shop['certificate'])}" class="info-tx">
+        </div>
+
+        <div style="height: .2rem"></div>
+        <div class="info-li">
+            <span>手机：</span>
+            <em>{$user['mobile']}</em>
+        </div>
+        <div class="info-li">
+            <button class="login-btn input dl" type="button">保存</button>
+        </div>
+    </form>
+</div>
+</body>
+<include file="mobile_public@footer"/>
+<script>
+
+    $(function () {
+        $(".login-btn").click(function () {
+            $.ajax({
+                url:"{:url('mshop/Index/infoPost')}"+'?'+$("form").serialize(),
+                type:'get',
+                dataType:'json',
+                data:{
+                },
+                success:function (data) {
+                    layui.use('layer',function () {
+                        var layer=layui.layer;
+                        if (data.code==1){
+                            layer.msg('修改成功');
+                            location.reload();
+                        }else{
+                            layer.msg(data.msg);
+                        }
+                    });
+                }
+            })
+        })
+    });
+
+    function showDemoImg(i) {
+        var img = $(i).attr('data-src');
+        if (img == undefined) {
+            return;
+        }
+        $(".typeupimg .tiimg").attr("src", img);
+        $(".typeupimg").show("slow");
+
+    }
+
+    $(function () {
+        layui.use('upload', function () {
+            var upload = layui.upload;
+            var uploadInst = upload.render({
+                elem: '#activity_btn', //绑定元素
+                url: '{:url("agent/Index/imgUpload")}', //上传接口
+                data: {path: 'activity'},
+                size: 2048,
+                before: function (obj, file) {
+                    // $(this.elem).html('上传中...');
+                    $(this.elem).attr('disabled', 'disabled');
+                    layer.load(); //上传loading
+                },
+                done: function (res, index, upload) {
+                    // console.log(res);
+                    if (res.code != 1) {
+                        layer.msg(res.msg);
+                        $(this.elem).html('<img onclick="showDemoImg(this);" id="activity_img" src="__TMPL__/public/img/default-thumbnail.png" width="135" />');
+                    } else {
+                        $("#activity_img").attr('src', "__ROOT__/upload/" + res.data.data.file);
+                        $("#activity_img").attr('data-src', "__ROOT__/upload/" + res.data.data.file);
+                        $("#activity").val(res.data.data.file);
+                        // $(this.elem).html('更换图片');
+                    }
+                    $(this.elem).removeAttr('disabled');
+                    layer.closeAll('loading');
+                },
+                error: function () {
+                    //请求异常回调
+                    layer.closeAll('loading');
+                    layer.msg('服务器繁忙');
+                }
+            });
+        });
+
+
+    });
+</script>
+</html>

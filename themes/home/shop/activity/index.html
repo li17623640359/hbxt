@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="活动列表" file="public@head"/>
+    <style>
+        .search {
+            display: inline-block;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+<!--header-->
+<include file="public@top"/>
+<div class="mains">
+    <div class="mes">
+        <include file="public@shopleft"/>
+        <div class="infos-right">
+            <div class="layui-card">
+                <div class="layui-card-header"></div>
+                <div class="layui-card-body">
+                    <a href="{:url('shop/Activity/add')}" class="layui-btn">添加活动</a>
+                </div>
+
+            </div>
+            <div class="layui-tab">
+                <form class="well form-inline margin-top-20" method="get" action="{:url('shop/Activity/index')}">
+                    <div class="mat-type">
+                        <div class="search">
+                            <em>审核：</em>
+                            <select name="is_examine" class="orders-text layui-input" style="width: 100px;">
+                                <!--是否审核-->
+                                <option value="-1">全部</option>
+                                <foreach name="is_examine" item="vo" key="k">
+                                    <if condition="((!empty($param['is_examine'])) && ($k==$param['is_examine']))">
+                                        <option value="{$k}" selected>{$vo}</option>
+                                        <else/>
+                                        <option value="{$k}">{$vo}</option>
+                                    </if>
+                                </foreach>
+                            </select>
+                        </div>
+                        <div class="search">
+                            <em>状态：</em>
+                            <select name="site" class="orders-text layui-input" style="width: 100px;">
+                                <!--是否开启-->
+                                <option value="-1">全部</option>
+                                <foreach name="site" item="vo" key="k">
+                                    <if condition="((!empty($param['site'])) && ($k==$param['site']))">
+                                        <option value="{$k}" selected>{$vo}</option>
+                                        <else/>
+                                        <option value="{$k}">{$vo}</option>
+                                    </if>
+                                </foreach>
+                            </select>
+                        </div>
+                        <div class="search">
+                            <em>活动开始时间：</em>
+                            <input type="text" name="start" class="mat-t layui-input" placeholder="起始时间" id="start_time"
+                                   style="width: 100px" value="{$_GET['start']|default=''}">
+                            &nbsp;&nbsp;
+                        </div>
+                        <div class="search">
+                            <!--<em>活动结束时间：</em><input type="text" name="end" class="mat-t layui-input" placeholder="截止时间"-->
+                            <!--id="end_time" style="width: 100px" value="{$_GET['end']|default=''}">-->
+                            <!--<em>&nbsp;&nbsp;</em>-->
+                            <button type="submit" class="mat-b" style="width: 50px;">搜索</button>
+                            <a style=" width: 50px; height: 36px; line-height: 36px; text-align: center; margin-left: 10px; background: #ff5c3c; color: #fff; display: block; overflow: hidden; float: left;"
+                               href="{:url('shop/Activity/index')}">清空</a>
+                        </div>
+                    </div>
+                </form>
+                <ul class="layui-tab-title">
+                    <!--<li class="taber layui-this all"><a href="{:url('agent/index/balance',array('type'=>'all'))}">流水明细</a></li>-->
+                    <!--<li class="taber pay"><a href="{:url('agent/index/balance',array('type'=>'pay'))}">充值明细</a></li>-->
+                    <!--<li>资金明细-->
+                </ul>
+
+                <div class="layui-tab-content">
+                    <div class="layui-tab-item layui-show">
+                        <table class="layui-table">
+                            <colgroup>
+                                <col width="140">
+                                <col width="30">
+                                <col width="100">
+                                <col width="60">
+                                <col width="120">
+                                <col width="60">
+                                <col width="60">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <!--<th width="50">ID</th>-->
+                                <th>活动信息</th>
+                                <th>活动配图</th>
+                                <th>金额/数量</th>
+                                <th>审核状态</th>
+                                <th>活动时间</th>
+                                <th>点击量</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <foreach name="res" item="vo">
+                                <tr>
+                                    <td>
+                                        <if condition="$vo.user_type eq 2">代理:
+                                            <elseif condition="$vo.user_type eq 3"/>
+                                            商户:
+                                            <else/>
+                                            未知:
+                                        </if>
+                                        {$vo.user_nickname}<br/>{$vo.mobile}<br/>
+                                        {$vo.activity_name}<br/>
+                                        {$activity_type[$vo.type]}<br/>
+                                        限制时间:{$vo.is_limit}<br/>
+                                        {$packet_type[$vo.packet_type]}
+                                    </td>
+                                    <td>
+                                        <if condition="(!empty($vo.activity_img))">
+                                            <a href="javascript:parent.imagePreviewDialog('{:cmf_get_image_preview_url($vo.activity_img)}')">
+                                                <img src="{:cmf_get_image_preview_url($vo.activity_img)}" width="50"
+                                                     style="cursor: pointer"/>
+                                            </a>
+                                        </if>
+                                    </td>
+                                    <td>金额：{$vo.total_money}<br/>数量：{$vo.packet_num}</td>
+                                    <td>
+                                        <p>{$is_examine[$vo.is_examine]}</p>
+                                        <p>
+                                            {$site[$vo.site]}
+                                        </p>
+                                    </td>
+                                    <td>
+                                        <p>活动开始：{:date("Y-m-d H:i",$vo['start_time'])}</p>
+                                        <p>活动结束：{:date("Y-m-d H:i",$vo['end_time'])}</p>
+                                    </td>
+                                    <td>{$vo.click_num}</td>
+                                    <td>
+                                        <a href="{:url('Activity/details',array('id'=>$vo['id']))}">详情</a><br/>
+                                        <if condition="(empty($vo.site))">
+                                            <a href="{:url('Activity/edit',array('id'=>$vo['id']))}">编辑</a><br/>
+                                            <a class="site" data-id="{$vo.id}" data-site="1"
+                                               href="javascript:;">开启</a><br/>
+                                            <else/>
+                                            <a class="site" data-id="{$vo.id}" data-site="0"
+                                               href="javascript:;">关闭</a><br/>
+                                        </if>
+                                        <!--<a href="{:url('Activity/delete',array('id'=>$vo['id']))}" class="js-ajax-delete">{:lang('DELETE')}</a>-->
+                                    </td>
+                                </tr>
+                            </foreach>
+                            </tbody>
+                        </table>
+                    </div>
+                    <ul class="pagination">{$page|default=''}</ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!--Footer-->
+<include file="public@foot"/>
+<script type="text/javascript">
+    $(function () {
+
+        $(".site").click(function () {
+            var id = $(this).attr('data-id');
+            var site = $(this).attr('data-site');
+            $.ajax({
+                url: "{:url('Activity/editSite')}",
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    id: id,
+                    site: site
+                },
+                success: function (data) {
+                    layui.use('layer', function () {
+                        layer.msg(data.msg);
+                        if (data.code == 1) {
+                            location.reload();
+                        }
+                    });
+
+                }
+            })
+        });
+
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            layer.photos({
+                photos: '#layer-photos-demo'
+                , anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+            });
+        });
+        layui.use('laydate', function () {
+            var laydate = layui.laydate;
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#start_time', //指定元素
+                theme: '#ff5c3c',
+                type: 'month'
+            });
+        });
+        layui.use('laydate', function () {
+            var laydate = layui.laydate;
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#end_time', //指定元素
+                theme: '#ff5c3c',
+                type: 'month'
+            });
+        });
+
+        $(".taber").removeClass('layui-this');
+        var typer = $(".type").val();
+        $("." + typer + "").addClass('layui-this');
+    });
+
+</script>
+</body>
+<html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="微信支付" file="public@head"/>
+</head>
+<body>
+
+<!--pays-->
+<include file="public@top"/>
+<div class="mains">
+    <div class="subs">
+        <div class="subs-lam">微信支付</div>
+        <div class="pays-info">
+            <span>订单编号：{$order_info.in_code}</span>
+        </div>
+        <div class="pays-n">总支付金额：<em>&yen;{$order_info.in_money}</em></div>
+        <div class="pays-type">
+            <div class="pays-type-lam">
+                <a href="javascript:;" class="payaction">微信支付</a>
+                <!--<a href="javascript:;">支付宝支付</a>-->
+            </div>
+            <div class="pays-type-cot">
+                <div class="ptc" style="display: block;">
+                    <!--微信支付-->
+                    <!-- <img src="http://paysdk.weixin.qq.com/example/qrcode.php?data={:urlencode($url)}"/> -->
+                    <img src="{:url('user/pay/qrcode')}?data={:urlencode($url)}"/>
+                    <span>打开微信，扫一扫支付</span>
+                </div>
+                <!--<div class="ptc">-->
+                <!--&lt;!&ndash;支付宝支付&ndash;&gt;-->
+                <!--<img src=""/>-->
+                <!--<span>打开支付宝，扫一扫支付</span>-->
+                <!--</div>-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="landr-bot">版权所有
+    <if condition="(!empty($allocation)) and (!empty($allocation['record']))">
+        {$allocation['record']}
+        <else/>
+        {:cache('self_info')['site_icp']}
+    </if>
+</div>
+</body>
+<script>
+    $(document).ready(function () {
+        //types
+        var $ul = $('.pays-type-cot .ptc');
+        var $li = $('.pays-type-lam a');
+        $li.click(function () {
+            var $this = $(this);
+            var $t = $this.index();
+            $li.removeClass();
+            $this.addClass('payaction');
+            $ul.css('display', 'none');
+            $ul.eq($t).css('display', 'block');
+        });
+    });
+    var orderid = '{$order_info.id}';
+    $(function () {
+        var t = setInterval(function () {
+            $.ajax({
+                type: "POST", url: "/shop/Fund/apiPayoderState",
+                async: false,
+                data: {'orderid': orderid},
+                success: function (data) {
+                    if (data.code == 1) {
+                        clearInterval(t);
+                        location.href = "{$location_url}";
+                    } else {
+
+                    }
+                }
+            })
+        }, 3000);
+    });
+</script>
+</html>

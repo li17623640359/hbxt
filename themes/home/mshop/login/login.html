@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="登录" file="mobile_public@head"/>
+</head>
+<body>
+<div class="moball">
+    <!--login-->
+    <div class="login-lam">Hi,欢迎登录</div>
+    <div class="login-main bshadow">
+        <!--<form class="js-ajax-form" action="{:url('mshop/Login/loginPost')}" method="post">-->
+            <input type="text" name="username" placeholder="手机号" class="login-text username"/>
+            <input type="password" name="pwd" placeholder="登录密码" class="login-text pwd"/>
+            <button class="login-btn input dl">立即登录</button>
+            <!--<button class="login-btn input forms-btn js-ajax-submit" type="submit">立即登录</button>-->
+        </form>
+    </div>
+</div>
+</body>
+<include file="mobile_public@footer"/>
+<script>
+$(function () {
+    $(".dl").click(function () {
+        var username=$(".username").val();
+        var pwd=$(".pwd").val();
+        $.ajax({
+            url:"{:url('mshop/Login/loginPost')}",
+            type:'post',
+            dataType:'json',
+            data:{
+                username:username,
+                pwd:pwd
+            },
+            success:function (data) {
+                console.log(data);
+                layui.use(['layer'],function () {
+                    if (data.code==1){
+                        layer.msg('登录成功');
+                        location.href=data.url;
+                    } else{
+                        layer.msg(data.msg);
+                    }
+                });
+            }
+        })
+    })
+})
+</script>
+</html>

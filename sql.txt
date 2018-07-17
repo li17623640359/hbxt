@@ -1,0 +1,56 @@
+﻿2018-07-13 add
+ALTER TABLE `hbxt`.`cmf_user_activity` ADD COLUMN `fixed_ext` TEXT NULL COMMENT '定额红包属性' AFTER `packet_ext`; 
+ALTER TABLE `hbxt`.`cmf_user_code` ADD COLUMN `code_value` VARCHAR(32) NOT NULL COMMENT '二维码码值' AFTER `code_num`, ADD UNIQUE INDEX (`code_value`); 
+2018-07-09 add
+ALTER TABLE `hbxt`.`cmf_user_activity` ADD COLUMN `temp_num` INT(8) DEFAULT 0 NULL COMMENT '临时点击量' AFTER `click_num`; 
+ALTER TABLE `hbxt`.`cmf_user_code_ext` CHANGE `user_code` `user_code` VARCHAR(100) CHARSET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '' NULL COMMENT '领取者标识符', CHANGE `user_name` `user_name` VARCHAR(100) CHARSET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '' NULL COMMENT '领取者'; 
+ALTER TABLE `hbxt`.`cmf_user_activity` ADD COLUMN `record_num` INT(8) DEFAULT 0 NULL COMMENT '扫码量' AFTER `click_num`; 
+ALTER TABLE `hbxt`.`cmf_user_activity_record` ADD COLUMN `type` SMALLINT(2) DEFAULT 1 NULL COMMENT '1点击，2扫码' AFTER `user_name`, ADD COLUMN `time_y` VARCHAR(10) NULL COMMENT '年' AFTER `type`, ADD COLUMN `time_m` VARCHAR(10) NULL COMMENT '月' AFTER `time_y`, ADD COLUMN `time_d` VARCHAR(10) NULL COMMENT '日' AFTER `time_m`, ADD COLUMN `num` INT(10) DEFAULT 0 NULL COMMENT '次数' AFTER `time_d`, ADD INDEX (`user_code`), ADD INDEX (`time_y`, `time_m`), ADD INDEX (`time_y`, `time_m`, `time_d`), ADD INDEX (`time_y`), ADD INDEX (`time_m`), ADD INDEX (`time_d`), ADD INDEX (`user_code`, `time_y`, `time_m`, `time_d`);
+ALTER TABLE `hbxt`.`cmf_user_activity` ADD COLUMN `start_time` INT(10) DEFAULT 0 NULL COMMENT '开始时间' AFTER `update_time`, ADD COLUMN `end_time` INT(10) DEFAULT 0 NULL COMMENT '结束时间' AFTER `start_time`; 
+2018-07-03 add
+ALTER TABLE `hbxt`.`cmf_user_recharge` CHANGE `in_moeny` `in_money` DECIMAL(18,2) DEFAULT 0.00 NOT NULL COMMENT '充值金额'; 
+2018-06-28 add
+
+CREATE TABLE `cmf_user_recharge` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '充值id',
+  `user_id` int(11) NOT NULL,
+  `in_code` varchar(50) NOT NULL COMMENT '充值单号',
+  `in_moeny` decimal(18,2) NOT NULL DEFAULT '0.00' COMMENT '充值金额',
+  `in_type` smallint(2) DEFAULT '0' COMMENT '充值方式，1微信，2支付宝，3平台充值',
+  `more` text,
+  `pay_log` text,
+  `sys_time` datetime NOT NULL,
+  `create_time` int(11) DEFAULT '0',
+  `update_time` int(11) DEFAULT '0',
+  `status` tinyint(1) DEFAULT '0' COMMENT '充值状态1成功0失败',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `in_code` (`in_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='充值信息';
+
+CREATE TABLE `cmf_user_bill` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '财务id',
+  `user_id` int(11) DEFAULT NULL COMMENT '用户id',
+  `bill_type` smallint(2) NOT NULL DEFAULT '0' COMMENT '1收入2支出',
+  `bill_kind` varchar(50) NOT NULL COMMENT '类型：pay充值，server推广服务，packet活动红包',
+  `curr_amount` decimal(18,2) NOT NULL COMMENT '变动金额',
+  `curr_balance` decimal(18,2) NOT NULL COMMENT '余额',
+  `create_time` int(11) DEFAULT '0',
+  `update_time` int(11) DEFAULT '0',
+  `remark` varchar(200) DEFAULT NULL COMMENT '系统备注',
+  `link_id` int(11) DEFAULT '0' COMMENT '关联id',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户资金流水';
+
+2018-6-12 add
+ALTER TABLE `hbxt`.`cmf_user_activity` ADD COLUMN `packet_type` SMALLINT(2) DEFAULT 0 NULL COMMENT '红包分配模式，1大额，随机2随机3大额，等额，4等额' AFTER `packet_num`; 
+ALTER TABLE `hbxt`.`cmf_user_activity` ADD COLUMN `packet_ext` TEXT NULL COMMENT '红包扩展属性（大额红包属性）' AFTER `packet_type`; 
+ALTER TABLE `hbxt`.`cmf_user_code_ext` ADD COLUMN `aid` INT(10) NOT NULL COMMENT '所属活动ID' AFTER `code_num`; 
+ALTER TABLE `hbxt`.`cmf_user` ADD COLUMN `frozen_total` DECIMAL(10,2) DEFAULT 0 NULL COMMENT '冻结金额' AFTER `is_delete`; 
+ALTER TABLE `hbxt`.`cmf_user` ADD COLUMN `parent_id` INT(10) DEFAULT 0 NULL COMMENT '商户的代理商ID' AFTER `frozen_total`;
+ALTER TABLE `cmf_user_activity`DROP COLUMN `is_examine`,ADD COLUMN `is_examine`  smallint(2) NULL DEFAULT 0 COMMENT '是否审核 0未审核 1审核' AFTER `packet_ext`
+2018-7-12 add
+ALTER TABLE `cmf_user_code`ADD COLUMN `parent_id`  int(11) NULL DEFAULT 0 COMMENT '0代表管理员分配，其他代理商id' AFTER `user_code`
+
+
+ALTER TABLE `cmf_user_activity`
+ADD COLUMN `site`  int(2) NOT NULL DEFAULT 0 COMMENT '0:关闭  ； 1：开启' AFTER `is_examine`

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="我的活动" file="mobile_public@head"/>
+</head>
+<body>
+<div class="moball">
+    <!--login-->
+    <div class="tops"><a class="goback" href="{:url('mshop/Index/index')}">
+        <img src="__TMPL__/mobile_public/img/left.png"/><em>返回</em></a><font>我的活动</font></div>
+    <div class="tops-nbsp"></div>
+    <div class="searchs">
+        <form action="" method="get">
+            <input type="search" name="activity_name" id="activity_name" value="{$activity_name}" class="searchs-text" placeholder="活动名称"/>
+        </form>
+    </div>
+    <div id="datalist">
+
+    </div>
+</div>
+</body>
+<include file="mobile_public@footer"/>
+<script>
+    layui.use('flow', function(){
+        var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
+        var flow = layui.flow;
+        var activity_name= $("#activity_name").val();
+        flow.load({
+            elem: '#datalist', //指定列表容器
+            done: function(page, next){ //到达临界点（默认滚动触发），触发下一页
+                var lis = [];
+                //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+                $.ajax({
+                    type: 'POST', dataType: 'json',
+                    url: "{:url('mshop/Index/active')}",
+                    data: {page:page,activity_name:activity_name},
+                    success: function (res) {
+                        //假设你的列表返回在data集合中
+                        layui.each(res.data.list.data, function(index, item){
+                            var id = item.id;
+                            var img = '';
+                            if(item.activity_img == ''){
+                                img = '<img src="__TMPL__/public/img/default-thumbnail.png" />';
+                            }else{
+                                img = '<img src="__ROOT__/upload/'+item.activity_img+'" />';
+                            }
+                            lis.push(
+                                '<a href="/mshop/Index/details/id/'+id+'" class="hd-li">\n'
+                                +' <span>'+img+'</span>'
+                                +'<em> '+item.activity_name+'</em></a>');
+                        });
+                        //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                        //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                        next(lis.join(''), page < res.data.list.last_page);
+                    }
+                });
+            }
+        });
+    });
+</script>
+</html>

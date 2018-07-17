@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="红包详情" file="public@head"/>
+    <style>
+        .mesadr-cot {
+            z-index: 1000;
+        }
+    </style>
+
+</head>
+<body>
+<include file="public@top"/>
+<!--header-->
+<div class="mains">
+    <div class="mes">
+        <include file="public@shopLeft"/>
+        <div class="mes-right" style="width: 892px">
+            <div class="mes-lam">编辑活动信息</div>
+            <div class="wrap js-check-wrap">
+
+                <form action="#" id="form1" method="post" class="form-horizontal js-ajax-form margin-top-20">
+                    <div class="row">
+                        <div class="col-md-12">
+
+                            <div class="mesli">
+                                <div class="mes-font">名称：</div>
+                                <input type="hidden" name="post[id]" value="{$post.id}"/>
+                                <input type="text" class="mes-text" name="post[activity_name]"  id="activity_name" required value="{$post.activity_name}" placeholder="请输入名称"/>
+                            </div>
+                            <div class="mesli">
+                                <div class="mes-font">缩略图：</div>
+                                <input type="hidden" name="post[activity_img]" id="activity" value="{$post.activity_img}">
+                                <a class="up-btn" id="activity_btn" style="cursor: pointer">
+                                    <if condition="empty($post.activity_img)">
+                                        <img onclick="showDemoImg(this);" id="activity_img" src="__TMPL__/public/img/default-thumbnail.png" width="135" />
+                                        <else/>
+                                        <img onclick="showDemoImg(this);" id="activity_img" src="{:cmf_get_image_preview_url($post.activity_img)}" width="135" style="cursor: pointer" />
+                                    </if>
+                                </a>
+                            </div>
+                            <div class="mesli">
+                                <div class="mes-font">摘要：</div>
+                                <textarea class="mes-text" style="width: 600px; height: 100px"  name="post[activity_remark]"    placeholder="请填写摘要">{$post.activity_remark}</textarea>
+                            </div>
+
+                            <div class="mesli">
+                                <div class="mes-font">开始时间</div>
+                                <input id="start" type="text" value="{:date('Y-m-d H:i:s',$post.start_time)}" required class="mes-text" name="post[start_time]"
+                                       placeholder="请输入开始时间"/>
+                            </div>
+
+                            <div class="mesli">
+                                <div class="mes-font">结束时间</div>
+                                <input id="end" type="text" required value="{:date('Y-m-d H:i:s',$post.end_time)}" class="mes-text" name="post[end_time]"
+                                       placeholder="请输入结束时间"/>
+                            </div>
+
+                            <div class="mesli">
+                                <div class="mes-font">时间限制：</div>
+                                <input type="text" class="mes-text" value="{$post.is_limit}" name="post[is_limit]" id="is_limit" required
+                                       placeholder="不填则代表不限制。单位：小时"/>
+                            </div>
+
+                            <div class="mesli row">
+                                <div class="mes-font col-md-1">内容：</div>
+                                <script type="text/plain" class="col-md-11" id="content" name="post[activity_content]"  >{$post.activity_content}</script>
+                            </div>
+
+                            <div class="mesli">
+                                <div class="mes-font">视频：</div>
+                                <input class="mes-text" type="text" name="post[activity_video]" id="thumbnail-file"  value="{$post.activity_video}"/>
+                                <a href="javascript:uploadOne('视频上传','#thumbnail-file','video');">上传</a>
+                            </div>
+                            <div class="mesli">
+                                <div style="">
+                                    <button type="button" class="mes-btn " onclick="saveData()">{:lang('EDIT')}</button>
+                                    <!--<a class="btn btn-default" href="{:url('Agent/index')}">{:lang('BACK')}</a>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Footer-->
+<include file="public@foot"/>
+<script type="text/javascript">
+    //编辑器路径定义
+    var editorURL = GV.WEB_ROOT;
+</script>
+<script type="text/javascript" src="__STATIC__/js/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="__STATIC__/js/ueditor/ueditor.all.min.js"></script>
+<script>
+    editorcontent = new baidu.editor.ui.Editor();
+    editorcontent.render('content');
+    try {
+        editorcontent.sync();
+    } catch (err) {
+    }
+
+    $('.btn-cancel-thumbnail').click(function () {
+        $('#thumbnail-preview').attr('src', '__TMPL__/public/assets/images/default-thumbnail.png');
+        $('#thumbnail').val('');
+    });
+    $("#user_id").change(function(){
+        var id = $(this).find(":selected").val();
+        if(id == ''){
+            $("#dataBox").hide();
+            $("#code_num").html('');
+            $("#user_money").html('');
+            return;
+        }
+        $.post('{:url("agent/Activity/getUserData")}',{id:id},function(re){
+            if(re.code == 1){
+                $("#code_num").html(re.data.code_num);
+                $("#user_money").html(re.data.user_money);
+                $("#dataBox").show();
+            }else{
+                $("#dataBox").hide();
+                $("#code_num").html('');
+                $("#user_money").html('');
+                layer.alert(re.msg);
+            }
+        },'json');
+    });
+    $("#packet_type").change(function(){
+        var id = $(this).find(":selected").val();
+        if(id == 1 || id == 3){
+            $("#packetBox").show();
+        }else{
+            $("#packetBox").hide();
+            $("#packet_ext_num").val('');
+            $("#packet_ext_min").val('');
+            $("#packet_ext_max").val('');
+        }
+    });
+    function showDemoImg(i) {
+        var img = $(i).attr('data-src');
+        if (img == undefined) {
+            return;
+        }
+        $(".typeupimg .tiimg").attr("src", img);
+        $(".typeupimg").show("slow");
+
+    }
+
+    $(function () {
+        layui.use('upload', function () {
+            var upload = layui.upload;
+            var uploadInst = upload.render({
+                elem: '#activity_btn', //绑定元素
+                url: '{:url("agent/Index/imgUpload")}', //上传接口
+                data: {path: 'activity'},
+                size: 2048,
+                before: function (obj, file) {
+                    // $(this.elem).html('上传中...');
+                    $(this.elem).attr('disabled', 'disabled');
+                    layer.load(); //上传loading
+                },
+                done: function (res, index, upload) {
+                    // console.log(res);
+                    if (res.code != 1) {
+                        layer.msg(res.msg);
+                        $(this.elem).html('<img onclick="showDemoImg(this);" id="activity_img" src="__TMPL__/public/img/default-thumbnail.png" width="135" />');
+                    } else {
+                        $("#activity_img").attr('src', "__ROOT__/upload/" + res.data.data.file);
+                        $("#activity_img").attr('data-src', "__ROOT__/upload/" + res.data.data.file);
+                        $("#activity").val(res.data.data.file);
+                        // $(this.elem).html('更换图片');
+                    }
+                    $(this.elem).removeAttr('disabled');
+                    layer.closeAll('loading');
+                },
+                error: function () {
+                    //请求异常回调
+                    layer.closeAll('loading');
+                    layer.msg('服务器繁忙');
+                }
+            });
+        });
+
+
+    });
+    function saveData(){
+        $.ajax({
+            async: false,
+            type: "POST",//方法类型
+            dataType: "json",//预期服务器返回的数据类型
+            url: "{:url('Activity/editPost')}",//url
+            data: $('#form1').serialize(),
+            success: function (result) {
+                if(result.code == 0){
+                    layer.alert(result.msg);
+                    return false;
+                }else {
+                    layer.alert(result.msg,{
+                        end: function(){
+                            window.location.href = '{:url("shop/Activity/index")}' ;
+                        }
+                    });
+                    return false;
+                }
+
+            }
+        });
+    }
+
+    layui.use('laydate', function () {
+        var laydate = layui.laydate;
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#start', //指定元素
+            type: 'datetime'
+        });
+    });
+    layui.use('laydate', function () {
+        var laydate = layui.laydate;
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#end', //指定元素
+            type: 'datetime'
+        });
+    });
+</script>
+</body>
+
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="后台管理" file="mobpublic@header"/>
+</head>
+<body>
+<div class="moball">
+    <!--login-->
+    <div class="manage-lam">{$site_info.site_name}后台管理</div>
+    <div class="manage-main">
+        <a href="{:url('mob/MobActivity/index')}"><font>活动管理</font><img src="__TMPL__/mobpublic/assets/img/right.png"/></a>
+        <a href="{:url('mob/MobShop/index')}"><font>商户管理</font><img src="__TMPL__/mobpublic/assets/img/right.png"/></a>
+        <a href="{:url('mob/MobAgent/index')}"><font>代理商管理</font><img
+                src="__TMPL__/mobpublic/assets/img/right.png"/></a>
+        <a href="{:url('mob/public/logout')}"><font>退出登录</font><img src="__TMPL__/mobpublic/assets/img/right.png"/></a>
+    </div>
+</div>
+</body>
+</html>

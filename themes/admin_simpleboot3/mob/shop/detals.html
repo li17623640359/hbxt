@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<include file="mobpublic@header"/>
+</head>
+<body>
+<div class="moball">
+<!--login-->
+<div class="tops"><a class="goback" href="{:url('mob/shop/index',array('id'=>$res['id']))}"><img src="__TMPL__/mobpublic/assets/img/left.png"/><em>返回</em></a><font>商户详情</font></div>
+<div class="tops-nbsp"></div>
+
+<div class="sh-li-name">{$res.shop_name}</div>
+<div style="height: .2rem;"></div>
+<div class="sh-d-li">
+	<span>负责人：</span>
+	<em>{$res.principal}</em>
+</div>
+<div class="sh-d-li">
+	<span>联系方式：</span>
+	<em>{$res.mobile}</em>
+</div>
+<div class="sh-d-li">
+	<span>商户地址：</span>
+	<em>{:address($res.province)}{:address($res.city)}{:address($res.district)}{$res.address}</em>
+</div>
+
+<div style="height: .2rem;"></div>
+<div class="sh-d-li">
+	<span>商户状态：</span>
+	<em>
+		<if condition="($res['site']=='normal')">
+			正常
+			<elseif condition="($res['site']=='banned')"/>
+			禁用
+			<elseif condition="($res['site']=='audit')"/>
+			待审核
+			<elseif condition="($res['site']=='reject')"/>
+			驳回
+		</if>
+	</em>
+</div>
+</div>
+</body>
+<include file="mobpublic@scripts"/>
+</html>

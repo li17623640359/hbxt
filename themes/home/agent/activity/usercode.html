@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="二维码列表" file="public@head"/>
+    <style>
+        .meinfo-pic {
+            width: auto;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+<!--header-->
+<!--header-->
+<include file="public@top"/>
+<div class="mains">
+    <div class="mes">
+        <include file="public@agentleft"/>
+        <div class="infos-right" >
+            <div class="mes-lam">二维码列表</div>
+            <div class="mat-type">&nbsp;
+            <form class="well form-inline margin-top-20" action="" method="get">
+                <div class="mat-type">&nbsp;&nbsp;
+                    <em>二维码状态：</em>
+                    <select name="status" class="mat-t layui-input" style="width: 100px">
+                        <option value="0"
+                        <if condition="$param.status eq '0' ">selected="selected"</if>
+                        >全部</option>
+                        <foreach name="code_status" item="vo">
+                            <option value="{$key}"<if condition="$key eq $param.status">selected="selected"</if>
+                            >{$vo}</option>
+                        </foreach>
+                    </select>
+                    <em>码段：</em>
+                    <input id="start" type="text" name="start" class="mat-t layui-input" value="{$param.start|default=''}" style="width: 100px">
+                    <em>-</em><input id="end" type="text" name="end" class="mat-t layui-input" value="{$param.end|default=''}" style="width: 100px">
+                    <em>所属活动：</em>
+                    <input  type="text" name="activity_name" class="mat-t layui-input" value="{$param.activity_name|default=''}" style="width: 150px">
+                    <em>&nbsp;</em>
+                    <button type="submit" class="mat-b" style="width: 50px;">搜索</button>
+                    <a style=" width: 50px; height: 36px; line-height: 36px; text-align: center; margin-left: 10px; background: #ff5c3c; color: #fff; display: block; overflow: hidden; float: left;"
+                       href="{:url('agent/Activity/userCode')}">清空</a>
+
+                </div>
+            </form>
+            </div>
+            <div class="layui-tab">
+                <div class="layui-tab-content">
+                    <div class="layui-tab-item layui-show">
+                        <table class="layui-table">
+                            <colgroup>
+                                <col width="150">
+                                <col width="200">
+                                <col>
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th width="220">二维码编号</th>
+                                <th width="100">二维码</th>
+                                <th width="100">所属活动</th>
+                                <th width="100">状态</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <foreach name="code" item="vo">
+                                <tr>
+                                    <td>{$vo.code_num}</td>
+                                    <td>
+                                        <if condition="(!empty($vo.code_img))">
+                                            <a href="javascript:parent.imagePreviewDialog('{:cmf_get_image_preview_url($vo.code_img)}')">
+                                                <img src="{:cmf_get_image_preview_url($vo.code_img)}" width="50"
+                                                     style="cursor: pointer"/>
+                                            </a>
+                                        </if>
+                                    </td>
+                                    <td>
+                                        <if condition="(!empty($vo.mobile))">
+                                            <if condition="(empty($vo.activity_name))">
+                                                未使用
+                                                <else/>
+                                                {$vo.activity_name}
+                                            </if>
+                                        </if>
+                                    </td>
+                                    <td>{$code_status[$vo.status]}</td>
+                                </tr>
+                            </foreach>
+                            </tbody>
+                        </table>
+                    </div>
+                    <ul class="pagination">{$page|default=''}</ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!--Footer-->
+<include file="public@foot"/>
+<script type="text/javascript">
+    $(function () {
+
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            layer.photos({
+                photos: '#layer-photos-demo'
+                , anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+            });
+        });
+        layui.use('laydate', function(){
+            var laydate = layui.laydate;
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#start_time', //指定元素
+                theme: '#ff5c3c'
+            });
+        });
+        layui.use('laydate', function(){
+            var laydate = layui.laydate;
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#end_time', //指定元素
+                theme: '#ff5c3c'
+                // type: 'datetime'
+            });
+        });
+
+        // layui.use('element', function () {
+        //     var element = layui.element;
+        //
+        //     //…
+        // });
+        $(".taber").removeClass('layui-this');
+        var typer=$(".type").val();
+        $("."+typer+"").addClass('layui-this');
+    });
+    // function saveData(){
+    //     var user_id=$('#user_id').val();
+    //
+    //     var start=$('#start_time').val();
+    //     var end=$('#end_time').val();
+    //     if(user_id==0){
+    //         layer.tips('承办者不能为空','#user_id',{tips: [2,'#005cd7']});
+    //         return false
+    //     }
+    //     location.href = '{:url("agent/Activity/index")}?user_id='+user_id+'&start='+start+'&end='+end;
+    // }
+</script>
+</body>
+<html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<include file="mobpublic@header" title="活动详情-{$act.activity_name}"/>
+<style>
+
+</style>
+<script>
+    
+</script>   
+</head>
+<body>
+<div class="hbs">
+	<div class="activitys">
+		<div class="activitys-cot"><img src="__TMPL__/mobpublic/img/hdtest.png" width="100%" /></div>
+	</div>
+	<div class="menu-nbsp"></div>
+	<div class="menus opa" style="display:none;">
+		<a href="javascript:;" id="hb-a">领取红包</a>
+	</div>
+	<div class="acti-tc" id="hb-chai">
+		<a href="javascript:;" class="acti-close"></a>
+		<div class="acti-tcbac"></div>
+		<div class="acti-tccot">
+			<div class="acti-tc-mid">
+				<a href="javascript:;" class="acti-a-have">拆</a>
+			</div>
+		</div>
+	</div>
+	<div class="acti-tc" id="hb-have">
+		<a href="javascript:;" class="acti-close"></a>
+		<div class="acti-tcbac"></div>
+		<div class="acti-tccot">
+			<div class="acti-tc-mid02">
+				<div class="mid-info">
+					<div class="mid-info-tit">恭喜你获得</div>
+					<div class="mid-info-num">
+						<span id="moneyBox"></span>
+						<em>元</em>
+					</div>
+				</div>
+				<a href="javascript:;" class="acti-a-share">确 定</a>
+			</div>
+		</div>
+	</div>
+</div>
+<include file="mobpublic@footer"/>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script>
+$(document).ready(function(){
+    $("#hb-a").click(function(){
+        $("#hb-chai").stop().show(500);
+        $("#hb-a").parent().stop().slideUp();
+    });
+    $(".acti-a-have").click(function(){
+        $.post('{:url("user/activity/receive")}',{},function(re){
+        	console.log(re);
+        	if(re.code == 1){
+        		$("#moneyBox").html(re.data);
+        		$("#hb-have").stop().show(500);
+                $("#hb-chai").stop().hide(0);
+        	}else{
+        		layer.msg(re.msg);
+        	}
+        },'json');
+    });
+    $(".acti-close").click(function(){
+        $(".acti-tc").stop().hide(500);
+        $("#hb-a").parent().stop().slideDown(500);
+    });
+    $(".acti-a-share").click(function(){
+    	$("#hb-have").stop().hide(500);
+    });
+});
+wx.config({
+    debug: false,
+    appId: "{$signPackage['appId']}",
+    timestamp: "{$signPackage['timestamp']}",
+    nonceStr: "{$signPackage['nonceStr']}",
+    signature: "{$signPackage['signature']}",
+    jsApiList: [
+      'checkJsApi',
+      'onMenuShareTimeline',
+      'onMenuShareAppMessage',
+      'onMenuShareQQ',
+      'onMenuShareWeibo',
+      'onMenuShareQZone'
+    ]
+});
+wx.ready(function () {
+	//分享朋友圈
+    wx.onMenuShareTimeline({
+        title: '{$act.activity_name}',
+        desc:'{$act.activity_remark}',
+        link: '{:url("user/activity/show",'',true,true)}?aid={$act.id}',
+        imgUrl: '{:cmf_get_image_url($act.activity_img)}',
+        trigger: function (res) {
+            // 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回
+            //layer.msg('用户点击分享到朋友圈');
+        },
+        success: function (res) {
+        	$("#hb-a").parent().stop().slideDown();
+        	//layer.msg('已分享');
+        },
+        cancel: function (res) {
+        	//layer.msg('已取消');
+        },
+        fail: function (res) {
+        	layer.msg(JSON.stringify(res));
+        }
+    });
+	//分享朋友
+	wx.onMenuShareAppMessage({
+	    title: '{$act.activity_name}',
+	    desc:'{$act.activity_remark}',
+        link: '{:url("user/activity/show",'',true,true)}?aid={$act.id}',
+        imgUrl: '{:cmf_get_image_url($act.activity_img)}',
+        trigger: function (res) {
+            // 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回
+            //layer.msg('用户点击发送给朋友');
+        },
+        success: function (res) {
+        	//layer.msg('已分享');
+        	$("#hb-a").parent().stop().slideDown();
+        },
+        cancel: function (res) {
+        	//layer.msg('已取消');
+        },
+        fail: function (res) {
+        	layer.msg(JSON.stringify(res));
+        }
+    });
+});
+</script>
+</body>
+</html>

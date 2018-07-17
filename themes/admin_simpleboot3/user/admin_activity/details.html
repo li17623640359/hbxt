@@ -1,0 +1,167 @@
+<include file="public@header"/>
+<style>
+    .layui-input {
+        display: inline-block;
+        width: auto;
+    }
+
+</style>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class=""><a href="{:url('AdminActivity/index')}">活动列表</a></li>
+        <li class="active"><a href="">红包详情</a></li>
+    </ul>
+    <div class="well">&nbsp;&nbsp;
+        <span>承办者：<em><if condition="$one.user_type eq 2">代理<elseif condition="$one.user_type eq 3">商户<else>未知</if>-{$one.user_nickname}-{$one.mobile}</em></span>
+        &nbsp;&nbsp;<span>活动名称：<em>{$one.activity_name}</em></span>
+        &nbsp;&nbsp;<span>活动类型：<em>{$activity_type[$one.type]}</em></span>
+        &nbsp;&nbsp;<span>总金额：<em>{$one.total_money}</em></span>
+        &nbsp;&nbsp;<span>红包数量：<em>{$one.packet_num}</em></span>
+        &nbsp;&nbsp;<span>分配模式：<em>{$packet_type[$one.packet_type]}</em></span>
+        <if condition="$one.packet_type eq 1 or $one.packet_type eq 3 "><br/>
+        &nbsp;&nbsp;<span>大额红包：<em>{:implode(" | ", $one.packet_set_list)}</em></span>
+        </if>
+    </div>
+    <if condition="$one.type eq 2">
+    <div class="well">&nbsp;&nbsp;
+        <span>活动二维码：<em>{$code.code_num}</em></span>
+        <span>二维码图：<em><if condition="(!empty($code.code_img))">
+                            <a href="javascript:parent.imagePreviewDialog('{:cmf_get_image_preview_url($code.code_img)}')">
+                                <img src="{:cmf_get_image_preview_url($code.code_img)}" width="50" style="cursor: pointer"/>
+                            </a>
+                        </if></em></span>
+    </div>
+    </if>
+    <!-- <form class="well form-inline margin-top-20" method="get" action="{:url('AdminActivity/index')}">
+        
+    </form> -->
+    <form class="js-ajax-form" action="" method="post">
+        <div class="table-actions">
+            <!--<notempty name="category">-->
+            <!--<button class="btn btn-primary btn-sm js-ajax-submit" type="submit"-->
+            <!--data-action="{:url('AdminArticle/listOrder')}">{:lang('SORT')}-->
+            <!--</button>-->
+            <!--</notempty>-->
+            <!--<button class="btn btn-primary btn-sm js-ajax-submit" type="submit"-->
+            <!--data-action="{:url('AdminArticle/publish',array('yes'=>1))}" data-subcheck="true">发布-->
+            <!--</button>-->
+            <!--<button class="btn btn-primary btn-sm js-ajax-submit" type="submit"-->
+            <!--data-action="{:url('AdminArticle/publish',array('no'=>1))}" data-subcheck="true">取消发布-->
+            <!--</button>-->
+            <!--<button class="btn btn-primary btn-sm js-ajax-submit" type="submit"-->
+            <!--data-action="{:url('AdminArticle/top',array('yes'=>1))}" data-subcheck="true">置顶-->
+            <!--</button>-->
+            <!--<button class="btn btn-primary btn-sm js-ajax-submit" type="submit"-->
+            <!--data-action="{:url('AdminArticle/top',array('no'=>1))}" data-subcheck="true">取消置顶-->
+            <!--</button>-->
+            <!--<button class="btn btn-primary btn-sm js-ajax-submit" type="submit"-->
+            <!--data-action="{:url('AdminArticle/recommend',array('yes'=>1))}" data-subcheck="true">推荐-->
+            <!--</button>-->
+            <!--<button class="btn btn-primary btn-sm js-ajax-submit" type="submit"-->
+            <!--data-action="{:url('AdminArticle/recommend',array('no'=>1))}" data-subcheck="true">取消推荐-->
+            <!--</button>-->
+            <!--&lt;!&ndash;-->
+            <!--<notempty name="category">-->
+            <!--<button class="btn btn-primary btn-sm js-articles-move" type="button">批量移动</button>-->
+            <!--</notempty>-->
+            <!--<button class="btn btn-primary btn-sm js-articles-copy" type="button">批量复制</button>-->
+            <!--&ndash;&gt;-->
+            <!-- <button class="btn btn-danger btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminActivity/delete')}" data-subcheck="true" data-msg="您确定删除吗？">
+                {:lang('DELETE')}
+            </button> -->
+        </div>
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="140">编号</th>
+                <th width="100">码图</th>
+                <th width="100">金额</th>
+                <th width="100">领取者</th>
+                <th width="100">领取时间</th>
+            </tr>
+            </thead>
+            <foreach name="res" item="vo">
+                <tr>
+                    <td>{$vo.code_num}</td>
+                    <td><if condition="(!empty($vo.code_img))">
+                            <a href="javascript:parent.imagePreviewDialog('{:cmf_get_image_preview_url($vo.code_img)}')">
+                                <img src="{:cmf_get_image_preview_url($vo.code_img)}" width="50" style="cursor: pointer"/>
+                            </a>
+                        </if>
+                    </td>
+                    <td><notempty name="$vo.end_time">{$vo.money}</notempty></td>
+                    <td>{$vo.user_name}</td>
+                    <td><notempty name="$vo.end_time">{:date("Y-m-d H:i:s",$vo.end_time)}</notempty></td>
+                </tr>
+            </foreach>
+            <tfoot>
+            <tr>
+                <th width="140">编号</th>
+                 <th width="100">码图</th>
+                <th width="100">金额</th>
+                <th width="100">领取者</th>
+                <th width="100">领取时间</th>
+            </tr>
+            </tfoot>
+        </table>
+        <div class="table-actions">
+            <!--<notempty name="category">-->
+            <!--<button class="btn btn-primary btn-sm js-ajax-submit" type="submit"-->
+            <!--data-action="{:url('AdminArticle/listOrder')}">{:lang('SORT')}-->
+            <!--</button>-->
+            <!--</notempty>-->
+            <!--<button class="btn btn-primary btn-sm js-ajax-submit" type="submit"-->
+            <!--data-action="{:url('AdminArticle/publish',array('yes'=>1))}" data-subcheck="true">发布-->
+            <!--</button>-->
+            <!--<button class="btn btn-primary btn-sm js-ajax-submit" type="submit"-->
+            <!--data-action="{:url('AdminArticle/publish',array('no'=>1))}" data-subcheck="true">取消发布-->
+            <!--</button>-->
+            <!--<button class="btn btn-primary btn-sm js-ajax-submit" type="submit"-->
+            <!--data-action="{:url('AdminArticle/top',array('yes'=>1))}" data-subcheck="true">置顶-->
+            <!--</button>-->
+            <!--<button class="btn btn-primary btn-sm js-ajax-submit" type="submit"-->
+            <!--data-action="{:url('AdminArticle/top',array('no'=>1))}" data-subcheck="true">取消置顶-->
+            <!--</button>-->
+            <!--<button class="btn btn-primary btn-sm js-ajax-submit" type="submit"-->
+            <!--data-action="{:url('AdminArticle/recommend',array('yes'=>1))}" data-subcheck="true">推荐-->
+            <!--</button>-->
+            <!--<button class="btn btn-primary btn-sm js-ajax-submit" type="submit"-->
+            <!--data-action="{:url('AdminArticle/recommend',array('no'=>1))}" data-subcheck="true">取消推荐-->
+            <!--</button>-->
+            <!--&lt;!&ndash;-->
+            <!--<notempty name="category">-->
+            <!--<button class="btn btn-primary btn-sm js-articles-move" type="button">批量移动</button>-->
+            <!--</notempty>-->
+            <!--<button class="btn btn-primary btn-sm js-articles-copy" type="button">批量复制</button>-->
+            <!--&ndash;&gt;-->
+            <!-- <button class="btn btn-danger btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminActivity/delete')}" data-subcheck="true" data-msg="您确定删除吗？">
+                {:lang('DELETE')}
+            </button> -->
+        </div>
+        <ul class="pagination">{$res->render()|default=''}</ul>
+    </form>
+</div>
+
+<script src="__STATIC__/js/admin.js"></script>
+<script>
+$().ready(function(){
+
+});
+function exportData() {
+    var status = $("#status :selected").val();
+    var mobile = $("#mobile").val();
+    var start = $("#start").val();
+    var end = $("#end").val();
+    if(start == '' || start == 0){
+    	layer.alert('请填写起始码段');
+        return false;
+    }
+    window.location.href = '{:url("AdminActivity/exportData")}?status=' + status + '&mobile=' + mobile + '&start=' + start+'&end='+end;
+}
+</script>
+</body>
+</html>

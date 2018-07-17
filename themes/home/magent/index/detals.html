@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="活动详情" file="mobile_public@head"/>
+</head>
+<body>
+<div class="moball">
+    <!--login-->
+    <div class="tops"><a href="{:url('magent/Index/activity')}" class="goback"  style="cursor: pointer"><img src="__TMPL__/mobile_public/img/left.png"/><em>返回</em></a><font>活动详情</font></div>
+    <div class="tops-nbsp"></div>
+
+    <div class="hd-d-pic">
+
+        <if condition="(!empty($one.activity_img))">
+        <span><img src="{:cmf_get_image_preview_url($one.activity_img)}" /></span>
+            <else/>
+            <span><img src="__TMPL__/public/img/default-thumbnail.png" /></span>
+        </if>
+        <em>{$one.activity_name}</em>
+    </div>
+    <div style="height: .2rem"></div>
+    <div class="hd-d-li">
+        <span>创建时间：</span>
+        <em>{$one.create_time}</em>
+    </div>
+    <div class="hd-d-li">
+        <span>承办者：</span>
+        <em><if condition="$one.user_type eq 2">代理<elseif condition="$one.user_type eq 3">商户<else>未知</if>-{$one.user_nickname}-{$one.mobile}</em></em>
+    </div>
+    <div class="hd-d-li">
+        <span>活动类型：</span>
+        <em>{$activity_type[$one.type]}</em>
+    </div>
+    <div class="hd-d-li">
+        <span>时间限制：</span>
+        <em>
+            <if condition="$one.is_limit eq 0">
+                不限制
+              <else/>
+            {$one.is_limit}
+            </if>
+        </em>
+    </div>
+    <div style="height: .2rem"></div>
+    <div class="hd-d-li">
+        <span>红包总金额：</span>
+        <em>￥{$one.total_money}</em>
+    </div>
+    <div class="hd-d-li">
+        <span>红包数量：</span>
+        <em>{$one.packet_num}</em>
+    </div>
+    <div class="hd-d-li">
+        <span>分配模式：</span>
+        <em>{$packet_type[$one.packet_type]}</em>
+    </div>
+    <div class="hd-d-li">
+        <span>点击量：</span>
+        <em>{$one.click_num}</em>
+    </div>
+    <div class="hd-d-li">
+        <span>扫码量：</span>
+        <em>{$one.record_num}</em>
+    </div>
+    <if condition="$one.packet_type eq 1 or $one.packet_type eq 3 "><br/>
+        <div class="hd-d-li">
+        <span>大额红包:</span>
+        <em>{:implode(" | ", $one.packet_set_list)}</em>
+
+        </div>
+    </if>
+    <div class="hd-d-li">
+        <span>活动状态：</span>
+
+        <if condition="$one.is_examine=1">
+            <em>已审核</em>
+            <else/>
+            <em>未审核</em>
+        </if>
+    </div>
+    <div style="height: .2rem"></div>
+    <a href="{:url('magent/Index/redPacket',array('id'=>$one['id']))}"  data-href="" class="manage-a"><font>红包详情</font><img src="__TMPL__/mobile_public/img/right.png"/></a>
+</div>
+<include file="mobile_public@footer"/>
+</body>
+</html>

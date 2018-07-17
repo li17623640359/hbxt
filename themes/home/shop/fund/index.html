@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="余额管理" file="public@head"/>
+</head>
+<body>
+<!--header-->
+<include file="public@top"/>
+<div class="mains">
+    <include file="public@shopLeft"/>
+    <div class="infos-right">
+        <div class="layui-card">
+            <div class="mes-lam">余额管理</div>
+            <div class="layui-card-body">
+                余额：{$user['balance']}
+                <a href="{:url('shop/Fund/windup')}" class="layui-btn">充值</a>
+            </div>
+
+        </div>
+        <div class="layui-tab">
+            <ul class="layui-tab-title">
+                <li class="taber all layui-this"><a href="{:url('shop/fund/index')}">流水明细</a></li>
+                <li class="taber pay"><a href="{:url('shop/fund/paywater')}">充值明细</a></li>
+            </ul>
+
+            <div class="layui-tab-content">
+
+                <div class="layui-tab-item aller layui-show">
+                    <form class="well form-inline margin-top-20" method="get" action="{:url('shop/Fund/index')}">
+                        <div class="mat-type">&nbsp;&nbsp;
+                            <select class="mat-t" name="bill_type">
+                                <option value="" id="bill_type0">全部</option>
+                                <option value="1" id="bill_type1">收入</option>
+                                <option value="2" id="bill_type2">支出</option>
+                            </select>
+                            <em>&nbsp;&nbsp;</em>
+                            <select class="mat-t" name="bill_kind">
+                                <option value="">全部</option>
+                                <foreach name="bill_kind" item="vo" key="k">
+                                    <if condition="(!empty($_GET['bill_kind']))">
+                                        <if condition="($_GET['bill_kind']==$k)">
+                                            <option value="{$k}">{$vo}</option>
+                                            <else/>
+                                            <option value="{$k}">{$vo}</option>
+                                        </if>
+                                        <else/>
+                                        <option value="{$k}">{$vo}</option>
+                                    </if>
+                                </foreach>
+                            </select>
+                            <em>&nbsp;&nbsp;</em>
+                            <input type="text" name="start" class="mat-t layui-input" placeholder="起始时间" id="start_time"
+                                   style="width: 100px" value="{$_GET['start']|default=''}">
+                            <em>-</em><input type="text" name="end" class="mat-t layui-input" placeholder="截止时间"
+                                             id="end_time" style="width: 100px" value="{$_GET['end']|default=''}">
+                            <em>&nbsp;&nbsp;</em>
+                            <button type="submit" class="mat-b" style="width: 50px;">搜索
+                            </button>
+                        </div>
+                    </form>
+                    <table class="layui-table">
+                        <colgroup>
+                            <col width="100">
+                            <col width="100">
+                            <col width="100">
+                            <col width="100">
+                            <col width="100">
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th style="text-align: center">收入/支出</th>
+                            <th style="text-align: center">类型</th>
+                            <th style="text-align: center">金额</th>
+                            <th style="text-align: center">余额</th>
+                            <th style="text-align: center">时间</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <foreach name="bill" item="vo">
+                            <tr>
+                                <td>
+                                    <if condition="($vo.bill_type==1)">
+                                        收入
+                                        <else/>
+                                        支出
+                                    </if>
+                                </td>
+                                <td>
+                                    {$bill_kind[$vo['bill_kind']]}
+                                </td>
+                                <td>
+                                    {$vo.curr_amount}
+                                </td>
+                                <td>{$vo.curr_balance}</td>
+                                <td>{:date('Y-m-d H:i:s',$vo.create_time)}</td>
+                            </tr>
+                        </foreach>
+                        </tbody>
+                    </table>
+                    <div class="pagination">{$bill->render()}</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <input type="hidden" class="bill_type" value="{$where['bill_type']|default='0'}">
+</div>
+</div>
+<!--Footer-->
+<include file="public@foot"/>
+<script type="text/javascript">
+    $(function () {
+
+        var bill_type=$(".bill_type").val();
+        $("#bill_type"+bill_type+"").attr('selected','selected');
+
+        layui.use('laydate', function () {
+            var laydate = layui.laydate;
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#start_time', //指定元素
+                theme: '#ff5c3c'
+            });
+        });
+        layui.use('laydate', function () {
+            var laydate = layui.laydate;
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#end_time', //指定元素
+                theme: '#ff5c3c'
+                // type: 'datetime'
+            });
+        });
+
+    })
+
+
+</script>
+</body>
+</html>

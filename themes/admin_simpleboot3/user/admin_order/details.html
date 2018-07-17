@@ -1,0 +1,78 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:url('AdminOrder/index')}">所有订单</a></li>
+        <li class="active"><a>订单详情</a></li>
+    </ul>
+    <div class="row margin-top-20">
+        <div class="col-md-2">
+            <div class="list-group">
+                <!--<a class="list-group-item" href="#A" data-toggle="tab">基本详情</a>-->
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="tab-content">
+                <div class="tab-pane active" id="A">
+                    <div class="form-group">
+                        <label for="input-alliance">订单号</label>
+                        <div>
+                            <input type="text" class="form-control" value="{$res['order']['in_code']}" id="input-alliance"
+                                   name="alliance_name" disabled>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input-deduct">总金额</label>
+                        <div>
+                            <input type="text" class="form-control" id="input-money" value="{$res['order']['in_money']}"
+                                   disabled>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-field">支付方式</label>
+                        <div>
+                            <if condition="$res['order']['in_type']==2">
+                                <input TYPE="text" class="form-control" value="支付宝" disabled>
+                                <elseif condition="$res['order']['in_type']==1"/>
+                                <input type="text" class="form-control" value="微信" disabled>
+                                <elseif condition="$res['order']['in_type']==3"/>
+                                <input type="text" class="form-control" value="平台充值" disabled>
+                            </if>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input-deduct">时间</label>
+                        <div>
+                            <input type="text" class="form-control" id="input-time" value="{:date('Y-m-d H:i:s',$res['order']['create_time'])}" disabled>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input-deduct">商户所属代理商：</label>
+                        <div>
+                            <if condition="($res['user']['user_type']==2)">
+                                    <input type="text" class="form-control" id="input-deduct" value="代理商"
+                                       disabled>
+                                <elseif condition="($res['user']['user_type']==3) && ($res['type']['referrer']==-1)"/>
+                                    <input type="text" class="form-control" id="input-deduct" value="直属"
+                                       disabled>
+                                <elseif condition="($res['user']['user_type']==3) && ($res['type']['referrer']!=-1)" />
+                                    <input type="text" class="form-control" id="input-deduct" value="{$res['type']['agent_name']}"
+                                       disabled>
+
+                            </if>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="__STATIC__/js/admin.js"></script>
+</body>
+</html>

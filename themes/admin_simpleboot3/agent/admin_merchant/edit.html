@@ -1,0 +1,76 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:url('AdminMerchant/index')}">所有代理商</a></li>
+        <li class="active"><a >编辑代理商</a></li>
+    </ul>
+    <div class="row margin-top-20">
+        <div class="col-md-6">
+            <form class="js-ajax-form" action="{:url('AdminMerchant/editPost')}" method="post">
+                <input type="hidden" name="id" value="{$data.id|default=''}">
+                <input type="hidden" name="user_pass" value="{$data.user_pass|default=''}">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="A">
+                        <div class="form-group">
+                            <label for="input-name">代理商姓名</label>
+                            <div>
+                                <input class="form-control" name="user_nickname" id="input-name" value="{$data.user_nickname|default=''}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="input-email">邮箱</label>
+                            <div>
+                                <input type="email" class="form-control" name="user_email" id="input-email" value="{$data.user_email|default=''}" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="input-phone">电话</label>
+                            <div>
+                                <input class="form-control" name="mobile" id="input-phone" value="{$data.mobile|default=''}" disabled="disabled">
+                                <input type="hidden" class="form-control" name="mobile"  value="{$data.mobile|default=''}" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="input-address">地址</label>
+                            <div>
+                                <input type="text" class="form-control" name="address" id="input-address" value="{$data.address|default=''}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="thumbnail">头像</label>
+                            <div >
+                                <input type="hidden" name="avatar" id="thumbnail" value="{$data.avatar|default=''}">
+                                <a href="javascript:uploadOneImage('图片上传','#thumbnail');">
+                                    <if condition="empty($data.avatar)">
+                                        <img src="__TMPL__/public/assets/images/default-thumbnail.png"
+                                             id="thumbnail-preview"
+                                             width="135" style="cursor: pointer"/>
+                                        <else/>
+                                        <img src="{:cmf_get_image_preview_url($data.avatar)}"
+                                             id="thumbnail-preview"
+                                             width="135" style="cursor: pointer"/>
+                                    </if>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary js-ajax-submit">{:lang('EDIT')}</button>
+                    <a class="btn btn-default" href="{:url('AdminMerchant/index')}">{:lang('BACK')}</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="__STATIC__/js/admin.js"></script>
+<script type="text/javascript">
+    $(function () {
+
+    })
+</script>
+</body>
+</html>

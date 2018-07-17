@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="商户中心" file="mobile_public@head"/>
+</head>
+<body>
+<div class="moball">
+    <!--login-->
+    <div class="manage-top"><a href="{:url('Index/set')}"><img src="__TMPL__/mobile_public/img/set.png"/></a></div>
+    <div class="manage-me">
+        <div class="manage-me-pic">
+            <a href="{:url('Index/info')}">
+                <if condition="(!empty($shop['shop_logo']))">
+                    <img src="{:cmf_get_image_preview_url($shop['shop_logo'])}"/>
+                    <else/>
+                    <img src="__TMPL__/mobile_public/img/default.png"/>
+                </if>
+            </a>
+        </div>
+        <div class="manage-me-name">
+            <em>{$shop['principal']}</em>
+        </div>
+        <div class="manage-me-num">
+            <a href="{:url('mshop/Index/windup')}"><em>{$user['balance']}</em>充值</a>
+            <a href="{:url('mshop/Index/active')}"><em>{$count}</em>活动</a>
+        </div>
+    </div>
+    <div class="manage-li">
+        <div class="manage-li-cot">
+            <span>充值记录</span>
+            <a href="{:url('mshop/Index/paylog')}">查看详情&nbsp;&gt;</a>
+        </div>
+    </div>
+    <div class="manage-li">
+        <div class="manage-li-cot">
+            <span>流水明细</span>
+            <a href="{:url('mshop/Index/itemized')}">查看详情&nbsp;&gt;</a>
+        </div>
+    </div>
+    <div class="manage-li">
+        <div class="manage-li-cot">
+            <span>我的活动</span>
+            <a href="{:url('mshop/Index/active')}">查看详情&nbsp;&gt;</a>
+        </div>
+    </div>
+    <div style="height: .5rem"></div>
+    <a href="{:url('shop/Login/logoOut')}" class="manage-out">退出登录</a>
+    <!--<div class="manage-main">
+        <a href="role.html"><font>角色管理</font><img src="img/right.png"/></a>
+        <a href="user.html"><font>用户管理</font><img src="img/right.png"/></a>
+        <a href="product.html"><font>商品管理</font><img src="img/right.png"/></a>
+    </div>-->
+
+</div>
+
+</body>
+<include file="mobile_public@footer"/>
+</html>

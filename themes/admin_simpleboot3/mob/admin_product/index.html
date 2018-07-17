@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>{$site_info.site_name}-商品管理</title>
+<include file="mobpublic@header" />
+</head>
+<body>
+<div class="moball">
+<!--top-->
+<div class="tops">
+    <a class="goback"><img src="__TMPL__/mobpublic/assets/img/left.png"/><em>返回</em></a>
+    <font>商品管理</font>
+</div>
+<div class="tops-nbsp"></div>
+<!--end tops-->
+<div class="product-top">
+	<div class="product-all">
+		<div class="pali">
+			<font>商品总数</font>
+			<span>{$total['product']}</span>
+		</div>
+		<div class="pali">
+			<font>名表</font>
+			<span>{$total['watch']}</span>
+		</div>
+		<div class="pali">
+			<font>名包</font>
+			<span>{$total['bag']}</span>
+		</div>
+	</div>
+</div>
+<div class="product-main">
+	<a href="{:url('mob/AdminProduct/brand')}"><font>品牌管理</font><img src="__TMPL__/mobpublic/assets/img/right.png"/></a>
+	<a href="{:url('mob/AdminProduct/watch')}"><font>名表管理</font><img src="__TMPL__/mobpublic/assets/img/right.png"/></a>
+	<a href="{:url('mob/AdminProduct/bag')}"><font>名包管理</font><img src="__TMPL__/mobpublic/assets/img/right.png"/></a>
+</div>
+</div>
+<include file="mobpublic@scripts" />
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="流水明细" file="mobile_public@head"/>
+</head>
+<body>
+<div class="moball">
+    <!--login-->
+    <div class="tops"><a class="goback" onclick="javascript:history.go(-1)" style="cursor: pointer">
+        <img src="__TMPL__/mobile_public/img/left.png"/><em>返回</em></a><font>流水明细</font></div>
+    <div class="tops-nbsp"></div>
+
+    <!--<div class="ye-top">-->
+        <!--<em>￥{$user_money.balance|default=''}</em>-->
+        <!--<a href="{:url('magent/Index/recharge')}">充值</a>-->
+    <!--</div>-->
+    <div class="ye-details" id="datalist">
+        <!--<div class="ye-li">-->
+        <!--<div class="yl-left">-->
+        <!--<div class="yl-time">2018-08-08 10:10</div>-->
+        <!--<div class="yl-tit">微信支付</div>-->
+        <!--</div>-->
+        <!--<div class="yl-right yl-s">-->
+        <!--<div class="yl-pri">￥300.00</div>-->
+        <!--<div class="yl-sta">收入</div>-->
+        <!--</div>-->
+        <!--<div class="yl-bz">余额充值</div>-->
+        <!--</div>-->
+    </div>
+
+</div>
+<include file="mobile_public@footer"/>
+<script>
+    layui.use('flow', function(){
+        var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
+        var flow = layui.flow;
+        flow.load({
+            elem: '#datalist', //指定列表容器
+            done: function(page, next){ //到达临界点（默认滚动触发），触发下一页
+                var lis = [];
+                //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+                $.ajax({
+                    type: 'POST', dataType: 'json', timeout: 3000,
+                    url: "{:url('magent/Index/bill')}",
+                    data: {page:page},
+                    success: function (res) {
+                        //假设你的列表返回在data集合中
+                        layui.each(res.data.list.data, function(index, item){
+                            var bill_type='';
+                            if (item.bill_type==1){
+                                bill_type='收入';
+                            }else if (item.in_type==2){
+                                bill_type='支出';
+                            }
+                            var bill_kind='';
+                            if (item.bill_kind=='pay'){
+                                bill_kind='充值';
+                            }else if (item.bill_kind=='server'){
+                                bill_kind='推广服务';
+                            }else if (item.bill_kind=='packet'){
+                                bill_kind='活动红包';
+                            }
+                            var create_time=timestampToTime(item.create_time);
+                            lis.push(
+                                '<div class="ye-li">'
+                                +'<div class="yl-left">'
+                                +'<div class="yl-time">'+create_time+'</div>'
+                                +'<div class="yl-tit">'+bill_kind+'</div>'
+                                +'</div>'
+                                +'<div class="yl-right yl-s">'
+                                +'<div class="yl-pri">变动金额'+item.curr_amount+'</div>'
+                                +'<div class="yl-sta">余额'+item.curr_balance+'</div>'
+                                +'</div>'
+                                +'<div class="yl-bz">'+bill_type+'</div>'
+                                +'</div>'
+                            )
+
+                        });
+                        //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                        //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                        next(lis.join(''), page < res.data.list.last_page);
+                    }
+                });
+            }
+        });
+    });
+    function timestampToTime(timestamp) {
+        var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+        Y = date.getFullYear() + '-';
+        M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+        D = date.getDate() + ' ';
+        h = date.getHours() + ':';
+        m = date.getMinutes() + ':';
+        s = date.getSeconds();
+        return Y+M+D+h+m+s;
+    }
+
+</script>
+</body>
+</html>

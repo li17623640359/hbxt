@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="余额管理" file="public@head"/>
+</head>
+<body>
+<!--header-->
+<include file="public@top"/>
+<div class="mains">
+    <include file="public@shopLeft"/>
+    <div class="infos-right">
+        <div class="layui-card">
+            <div class="mes-lam">余额管理</div>
+            <div class="layui-card-body">
+                余额：{$user['balance']}
+                <a href="{:url('shop/Fund/windup')}" class="layui-btn">充值</a>
+            </div>
+
+        </div>
+        <div class="layui-tab">
+            <ul class="layui-tab-title">
+                <li class="taber all"><a href="{:url('shop/fund/index')}">流水明细</a></li>
+                <li class="taber pay layui-this"><a href="{:url('shop/fund/paywater')}">充值明细</a></li>
+            </ul>
+
+            <div class="layui-tab-content">
+                <div class="layui-tab-item payer layui-show">
+                    <form class="well form-inline margin-top-20" method="get" action="{:url('shop/Fund/paywater')}">
+                        <div class="mat-type">&nbsp;&nbsp;
+                            <em>&nbsp;&nbsp;</em>
+                            <input type="text" name="start" class="mat-t layui-input" placeholder="起始时间" id="start_time"
+                                   style="width: 100px" value="{$_GET['start']|default=''}">
+                            <em>-</em><input type="text" name="end" class="mat-t layui-input" placeholder="截止时间"
+                                             id="end_time" style="width: 100px" value="{$_GET['end']|default=''}">
+                            <em>&nbsp;&nbsp;</em>
+                            <button type="submit" class="mat-b" style="width: 50px;">搜索
+                            </button>
+                        </div>
+                    </form>
+                    <table class="layui-table">
+                        <colgroup>
+                            <col width="150">
+                            <col width="200">
+                            <col>
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th>充值方式</th>
+                            <th>金额</th>
+                            <th>状态</th>
+                            <th>时间</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <foreach name="pay_log" item="vo">
+                            <tr>
+                                <td>
+                                    <if condition="($vo['in_type']=='1')">
+                                        微信支付
+                                        <elseif condition="($vo['in_type']=='2')"/>
+                                        支付宝支付
+                                        <elseif condition="($vo['in_type']==3)"/>
+                                        平台充值
+                                    </if>
+                                </td>
+                                <td>￥{$vo['in_money']}</td>
+                                <td>
+                                    <if condition="(empty($vo['status']))">
+                                        未完成
+                                        <else/>
+                                        完成
+                                    </if>
+                                </td>
+                                <td>{:date('Y-m-d H:i:s',$vo['create_time'])}</td>
+                            </tr>
+                        </foreach>
+                        </tbody>
+                    </table>
+                    <div class="pagination">{$pay_log->render()}</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!--Footer-->
+<include file="public@foot"/>
+<script type="text/javascript">
+    $(function () {
+        layui.use('laydate', function () {
+            var laydate = layui.laydate;
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#start_time', //指定元素
+                theme: '#ff5c3c'
+            });
+        });
+        layui.use('laydate', function () {
+            var laydate = layui.laydate;
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#end_time', //指定元素
+                theme: '#ff5c3c'
+                // type: 'datetime'
+            });
+        });
+
+    })
+
+
+</script>
+</body>
+</html>

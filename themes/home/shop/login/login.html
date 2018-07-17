@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="登录" file="public@head"/>
+</head>
+<body>
+
+<!--login&register-->
+<div class="landr-top">
+    <a href="javascript:;">
+        <!--{$site_info.site_seo_description}-->
+        <if condition="(!empty(cmf_get_option('site_info')['site_logo']))">
+            <img src="{:cmf_get_image_preview_url(cmf_get_option('site_info')['site_logo'])}" />
+            <else/>
+            <img src="__TMPL__/public/img/ifunLogo.png"/>
+        </if>
+    </a>
+    <font>欢迎登录</font>
+</div>
+<div class="landr-main" style="background: url(__TMPL__/public/img/landr-a.jpg) no-repeat center center">
+    <div class="landr-cen">
+        <div class="landr-form">
+            <form class="js-ajax-form" action="{:url('shop/Login/loginPost')}" method="post">
+                <div class="formslam">会员登录</div>
+                <div class="forms-text">
+                    <div class="forms-icon"><img src="__TMPL__/public/img/nameIcon.png"/></div>
+                    <input type="text" name="username" placeholder="帐号"/>
+                </div>
+                <div class="forms-text">
+                    <div class="forms-icon"><img src="__TMPL__/public/img/passwordIcon.png"/></div>
+                    <input type="password" name="pwd" placeholder="登录密码"/>
+                </div>
+                <div class="forms-text">
+                    <div class="forms-icon"><img src="__TMPL__/public/img/codeIcon.png"/></div>
+                    <input type="text" placeholder="验证码" name="code"/>
+                    <div class="forms-code">
+                        <captcha height="36" width="150" font-size="20"/>
+                    </div>
+                </div>
+                <!--<div class="forms-pwd"><a href="{:url('shop/login/forget')}">忘记密码？</a></div>-->
+                <button class="forms-btn js-ajax-submit" type="submit">立即登录</button>
+            </form>
+        </div>
+    </div>
+</div>
+<include file="public@foot"/>
+</body>
+</html>

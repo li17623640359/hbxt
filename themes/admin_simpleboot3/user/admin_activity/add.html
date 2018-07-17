@@ -1,0 +1,334 @@
+<include file="public@header"/>
+<style type="text/css">
+    .pic-list li {
+        margin-bottom: 5px;
+    }
+</style>
+<script type="text/html" id="photos-item-tpl">
+    <li id="saved-image{id}">
+        <input id="photo-{id}" type="hidden" name="photo_urls[]" value="{filepath}">
+        <input class="form-control" id="photo-{id}-name" type="text" name="photo_names[]" value="{name}"
+               style="width: 200px;" title="图片名称">
+        <img id="photo-{id}-preview" src="{url}" style="height:36px;width: 36px;"
+             onclick="imagePreviewDialog(this.src);">
+        <a href="javascript:uploadOneImage('图片上传','#photo-{id}');">替换</a>
+        <a href="javascript:(function(){$('#saved-image{id}').remove();})();">移除</a>
+    </li>
+</script>
+<script type="text/html" id="files-item-tpl">
+    <li id="saved-file{id}">
+        <input id="file-{id}" type="hidden" name="file_urls[]" value="{filepath}">
+        <input class="form-control" id="file-{id}-name" type="text" name="file_names[]" value="{name}"
+               style="width: 200px;" title="文件名称">
+        <a id="file-{id}-preview" href="{preview_url}" target="_blank">下载</a>
+        <a href="javascript:uploadOne('图片上传','#file-{id}','file');">替换</a>
+        <a href="javascript:(function(){$('#saved-file{id}').remove();})();">移除</a>
+    </li>
+</script>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:url('AdminActivity/index')}">活动列表</a></li>
+        <li class="active"><a href="{:url('AdminActivity/add')}">添加活动</a></li>
+    </ul>
+    <form action="{:url('AdminActivity/addPost')}" method="post" class="form-horizontal js-ajax-form margin-top-20">
+        <div class="row">
+            <div class="col-md-9">
+                <table class="table table-bordered">
+                    <tr>
+                        <th width="100">名称<span class="form-required">*</span></th>
+                        <td>
+                            <input class="form-control" type="text" name="post[activity_name]"
+                                   id="activity_name" required value="" placeholder="请输入名称"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>摘要</th>
+                        <td>
+                            <textarea class="form-control" name="post[activity_remark]" style="height: 80px;"
+                                      placeholder="请填写摘要"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>开始时间</th>
+                        <td>
+                        <input id="start" type="text" required name="post[start_time]" class="form-control" placeholder="请选择开始时间"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>结束时间</th>
+                        <td>
+                        <input id="end" type="text" required name="post[end_time]" class="form-control" placeholder="请选择结束时间"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>时间限制</th>
+                        <td>
+                        <input class="form-control" type="text" name="post[is_limit]"
+                                   id="is_limit" value="" placeholder="不填则代表不限制。单位：小时"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>内容</th>
+                        <td>
+                            <script type="text/plain" id="content" name="post[activity_content]"></script>
+                        </td>
+                    </tr>
+                    <!-- <tr>
+                        <th>相册</th>
+                        <td>
+                            <ul id="photos" class="pic-list list-unstyled form-inline"></ul>
+                            <a href="javascript:uploadMultiImage('图片上传','#photos','photos-item-tpl');"
+                               class="btn btn-default btn-sm">选择图片</a>
+                        </td>
+                    </tr> -->
+                    <tr>
+                        <th>视频</th>
+                        <td>
+                            <input class="form-control" type="text" name="post[activity_video]" id="thumbnail-file" value=""/>
+                            <a href="javascript:uploadOne('视频上传','#thumbnail-file','video');">上传</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>重要提示</th>
+                        <td>
+                        <span style="color:red;">以下活动设置，请仔细配置！一旦设置后，将无法修改.</span>
+                        <div>
+                        <span style="color:red;">*承办者：该活动的承办方（代理或商户）。</span>
+                        </div>
+                        <div>
+                        <span style="color:red;">*活动类型：1、多二维码，单一红包（一个二维码对应一个红包，适合二维码码墙活动）。2、单一二维码，多红包（一个二维码里包含多个红包）</span>
+                        </div>
+                        <div>
+                        <span style="color:red;">*时间限制：同一活动中，领取红包的时间限制；单位为小时制。不填则代表不限制（即可重复领取）。</span>
+                        </div>
+                        <div>
+                        <span style="color:red;">*总金额：本次活动的红包总额，不能超过其账户余额的{$bili}%；为了便于红包配置以及资金结算，请配置为整数。</span>
+                        </div>
+                        <div>
+                        <span style="color:red;">*红包数量：本次活动的红包数量，不能超过其二维码余量；为了便于红包配置以及资金结算，请配置为10的整数倍。</span>
+                        </div>
+                        <div>
+                            <span style="color:red;">*分配方式：1、定额红包，随机配置（可设置定额红包数量及金额，剩余的红包金额随机分配）2、随机配置（红包金额随机分配）
+                            <br/>3、定额红包，等额配置（可设置定额红包数量及金额，剩余的红包金额等额平均分配）4、随机配置（红包金额等额平均分配）。
+                            </span>
+                        </div>
+                        <div>
+                        <span style="color:red;">*红包最小限额：受微信现金红包接口影响，每个红包最低限额1元。</span>
+                        </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>承办者</th>
+                        <td>
+                        <select name="post[user_id]" class="form-control" id="user_id" required>
+                            <option value="">请选择</option>
+                            <foreach name="users" item="vo">
+                            <if condition="$vo.user_type eq 2">
+                            <option value="{$vo.id}">代理-{$vo.user_nickname}-{$vo.mobile}</option>
+                            <elseif condition="$vo.user_type eq 3">
+                            <option value="{$vo.id}">商户-{$vo.user_nickname}-{$vo.mobile}</option>
+                            </if>
+                            </foreach>
+                        </select>
+                        </td>
+                    </tr>
+                    <tr id="dataBox" style="display:none;">
+                        <th> </th>
+                        <td>
+                            <span>二维码余量：<em id='code_num'></em></span>
+                            <span>账户余额：<em id="user_money"></em></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>活动类型</th>
+                        <td>
+                        <select name="post[type]" class="form-control" id="type" required>
+                            <option value="">请选择</option>
+                            <foreach name="activity_type" item="vo">
+                            <option value="{$key}" >{$vo}</option>
+                            </foreach>
+                        </select>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <th>总金额</th>
+                        <td>
+                        <input class="form-control" type="text" name="post[total_money]" id="total_money" required value="" placeholder="请填写总金额"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>红包数量</th>
+                        <td>
+                        <input class="form-control" type="text" name="post[packet_num]" id="packet_num" required value="" placeholder="请填写红包数量"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>分配方式</th>
+                        <td>
+                        <select name="post[packet_type]" class="form-control" id="packet_type" required>
+                            <option value="">请选择</option>
+                            <foreach name="packet_type" item="vo">
+                            <option value="{$key}" >{$vo}</option>
+                            </foreach>
+                        </select>
+                        </td>
+                    </tr>
+                    <tr id="packetBox" style="display:none;">
+                        <th>定额红包</th>
+                        <td>
+                            <div>
+                                <a class="btn btn-primary fixedAdder">添加定额红包</a>
+                                <a class="btn btn-primary bigAdder">添加大额红包</a>
+                            </div>
+                            <div id="bigBox"></div>
+                            <div id="fixedBox"></div>
+                        </td>
+                    </tr>
+                </table>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-primary js-ajax-submit">{:lang('ADD')}</button>
+                        <a class="btn btn-default" href="{:url('AdminActivity/index')}">{:lang('BACK')}</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <table class="table table-bordered">
+                    <tr>
+                        <th><b>缩略图</b></th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div style="text-align: center;">
+                                <input type="hidden" name="post[activity_img]" id="thumbnail" value="">
+                                <a href="javascript:uploadOneImage('图片上传','#thumbnail');">
+                                    <img src="__TMPL__/public/assets/images/default-thumbnail.png"
+                                         id="thumbnail-preview"
+                                         width="135" style="cursor: pointer"/>
+                                </a>
+                                <input type="button" class="btn btn-sm btn-cancel-thumbnail" value="取消图片">
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript" src="__STATIC__/js/admin.js"></script>
+<script type="text/javascript">
+    //编辑器路径定义
+    var editorURL = GV.WEB_ROOT;
+</script>
+<script type="text/javascript" src="__STATIC__/js/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="__STATIC__/js/ueditor/ueditor.all.min.js"></script>
+<script type="text/javascript">
+var i = 0;
+    $(function () {
+
+        editorcontent = new baidu.editor.ui.Editor();
+        editorcontent.render('content');
+        try {
+            editorcontent.sync();
+        } catch (err) {
+        }
+
+        $('.btn-cancel-thumbnail').click(function () {
+            $('#thumbnail-preview').attr('src', '__TMPL__/public/assets/images/default-thumbnail.png');
+            $('#thumbnail').val('');
+        });
+
+        $("#user_id").change(function(){
+        	var id = $(this).find(":selected").val();
+        	if(id == ''){
+        		$("#dataBox").hide();
+        		$("#code_num").html('');
+        		$("#user_money").html('');
+        		return;
+        	}
+        	$.post('{:url("AdminActivity/getUserData")}',{id:id},function(re){
+        		if(re.code == 1){
+        			$("#code_num").html(re.data.code_num);
+                    $("#user_money").html(re.data.user_money);
+        			$("#dataBox").show();
+        		}else{
+        			$("#dataBox").hide();
+                    $("#code_num").html('');
+                    $("#user_money").html('');
+        			layer.alert(re.msg);
+        		}
+        	},'json');
+        });
+        $("#packet_type").change(function(){
+        	var id = $(this).find(":selected").val();
+        	if(id == 1 || id == 3){
+        		$("#packetBox").show();
+        	}else{
+        		$("#packetBox").hide();
+        		$('#fixedBox').empty();
+        		$("#bigBox").empty();
+        	}
+        });
+        $(".fixedAdder").click(function () {
+            var div=" <div class=\"row\" style=\"margin-top: 10px;\">\n" +
+                "                                <div class=\"col-md-3\">\n" +
+                "                                    <input type=\"text\" class=\"form-control\" name=\"post[fixed_ext]["+i+"][num]\" placeholder=\"数量\">\n" +
+                "                                </div>\n" +
+                "                                <div class=\"col-md-3\">\n" +
+                "                                    <input type=\"text\" class=\"form-control\" name=\"post[fixed_ext]["+i+"][money]\" placeholder=\"金额\">\n" +
+                "                                </div>\n" +
+                "                                <div class=\"col-md-2\">\n" +
+                "                                    <a class=\"btn btn-primary delete\">删除</a>\n" +
+                "                                </div>\n" +
+                "                            </div>";
+            $('#fixedBox').append(div);
+            i++;
+        });
+        $(".bigAdder").click(function () {
+        	/* if($.trim($("#bigBox").html()) != ''){
+        		return false;
+        	} */
+            var div=" <div class=\"row\" style=\"margin-top: 10px;\">\n" +
+                "                                <div class=\"col-md-3\">\n" +
+                "                                    <input type=\"text\" class=\"form-control\" name=\"post[packet_ext]["+i+"][num]\" placeholder=\"大额红包数量\">\n" +
+                "                                </div>\n" +
+                "                                <div class=\"col-md-3\">\n" +
+                "                                    <input type=\"text\" class=\"form-control\" name=\"post[packet_ext]["+i+"][min]\" placeholder=\"最小金额\">\n" +
+                "                                </div>\n" +
+                "                                <div class=\"col-md-3\">\n" +
+                "                                    <input type=\"text\" class=\"form-control\" name=\"post[packet_ext]["+i+"][max]\" placeholder=\"最大金额\">\n" +
+                "                                </div>\n" +
+                "                                <div class=\"col-md-2\">\n" +
+                "                                    <a class=\"btn btn-primary delete\">删除</a>\n" +
+                "                                </div>\n" +
+                "                            </div>";
+            $('#bigBox').append(div);
+            i++;
+        });
+        
+        $(document).on("click",'.delete',function () {
+            $(this).parent().parent().remove();
+        });
+    });
+    layui.use('laydate', function () {
+        var laydate = layui.laydate;
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#start', //指定元素
+            type: 'datetime'
+        });
+    });
+    layui.use('laydate', function () {
+        var laydate = layui.laydate;
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#end', //指定元素
+            type: 'datetime'
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,482 @@
+<include file="public@header"/>
+<style>
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+    }
+
+    input[type="number"] {
+        -moz-appearance: textfield;
+    }
+
+</style>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:url('AdminShop/index')}">商户管理</a></li>
+        <li><a href="{:url('AdminShop/add')}">添加商户</a></li>
+    </ul>
+    <form class="well form-inline margin-top-20" method="get" action="{:url('AdminShop/index')}">
+        状态:
+        <select class="form-control" name="site" style="width: 140px;">
+            <option value='0' id="all">全部</option>
+            <option value="normal" id="normal">正常</option>
+            <option value="banned" id="banned">封禁</option>
+            <option value="audit" id="audit">待审核</option>
+        </select> &nbsp;&nbsp;
+        <input type="hidden" class="sear" value="{$_GET['site']|default=0}">
+        <input type="submit" class="btn btn-primary" value="搜索"/>
+        <a class="btn btn-danger" href="{:url('AdminShop/index')}">清空</a>
+    </form>
+    <form method="post" class="js-ajax-form" action="{:url('AdminShop/listOrder')}">
+        <div class="table-actions">
+            <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminShop/audit')}" data-subcheck="true">审核通过
+            </button>
+
+            <a class="btn btn-primary btn-sm forbids">禁用
+            </a>
+
+            <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminShop/banned',array('no'=>1))}" data-subcheck="true">取消禁用
+            </button>
+
+            <button class="btn btn-danger btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminShop/delete')}" data-subcheck="true" data-msg="您确定删除吗？">
+                {:lang('DELETE')}
+            </button>
+        </div>
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="15">
+                    <label>
+                        <input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x">
+                    </label>
+                </th>
+                <th width="50">ID</th>
+                <th>商户名称</th>
+                <th>商户负责人</th>
+                <th>联系方式</th>
+                <td>余额</td>
+                <td>二维码数量</td>
+                <th>地址</th>
+                <th>审核通过时间</th>
+                <th>状态</th>
+                <th>所属代理商</th>
+                <th>备注</th>
+                <th width="180">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <foreach name="res" item="vo">
+                <tr>
+                    <td>
+                        <input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x" name="ids[]"
+                               value="{$vo.id}" title="ID:{$vo.id}">
+                    </td>
+                    <td>{$vo.id}</td>
+                    <td>{$vo.shop_name}</td>
+                    <td>{$vo.principal}</td>
+                    <td>{$vo.mobile}</td>
+                    <td>{$vo.balance}</td>
+                    <td>{$vo.number}</td>
+                    <td>{:address($vo.province)}{:address($vo.city)}{:address($vo.district)}{$vo.address}</td>
+                    <td>
+                        <if condition="($vo['site']=='reject')">
+                            驳回
+                            <elseif condition="($vo['site']=='audit')"/>
+                            待审核
+                            <else/>
+                            {:date('Y-m-d H:i:s',$vo['normal_time'])}
+                        </if>
+                    </td>
+                    <td>
+                        <if condition="($vo['site']=='normal')">
+                            正常
+                            <elseif condition="($vo['site']=='banned')"/>
+                            禁用
+                            <elseif condition="($vo['site']=='audit')"/>
+                            待审核
+                            <elseif condition="($vo['site']=='reject')"/>
+                            驳回
+                        </if>
+                    </td>
+                    <td>
+                        <if condition="($vo['referrer']==-1)">
+                            直属
+                            <else/>
+                                <if condition="(empty($vo['user_nicknamer']))">
+                                    {$vo.mobiler}
+                                    <else/>
+                                    {$vo.user_nicknamer}
+                                </if>
+                        </if>
+                    </td>
+                    <td>
+                        <if condition="($vo['site']=='banned')">
+                            驳回原因：{$vo['failed_msg']}
+                        </if>
+                        <if condition="($vo['site']=='reject')">
+                            禁用原因：{$vo['reject']}
+                        </if>
+                        <if condition="($vo['number']!=0)">
+                            已获得二维码数量：{$vo['number']}
+                        </if>
+                        <if condition="($vo['site']=='audit')"/>
+                        备注：{$vo.remarks}
+                        </if>
+                    </td>
+
+                    <td>
+                        <a href="{:url('AdminShop/edit',array('id'=>$vo['id']))}">编辑</a>
+                        <a href="{:url('AdminShop/delete',array('id'=>$vo['id']))}" class="js-ajax-delete">删除</a>
+                        <if condition="($vo['site']=='normal')">
+                            <a class="forbid" href="javascript:;" data-id="{$vo['id']}">禁用</a>
+                            <a href="javascript:;" class="alloter" data-id="{$vo['user_id']}" data-toggle="modal"
+                               data-target="#addCode">分配</a>
+                            <a class="recharge" data-id="{$vo['user_id']}" data-toggle="modal" data-target="#recharge"  data-whatever="" style="cursor: pointer">充值</a>
+                            <elseif condition="($vo['site']=='banned')"/>
+                            <a href="{:url('AdminShop/banned',array('id'=>$vo['id'],'no'=>'1'))}"
+                               data-msg="您确定要解除禁用？" class="js-ajax-delete">取消禁用</a>
+                            <elseif condition="($vo['site']=='audit')"/>
+                            <a href="{:url('AdminShop/audit',array('id'=>$vo['id'],'user_id'=>$vo['user_id']))}"
+                               data-msg="您确定要审核通过？"
+                               class="js-ajax-delete">审核</a>
+                            <a class="faild" href="javascript:;" data-id="{$vo['id']}">驳回</a>
+                            <elseif condition="($vo['site']=='reject')"/>
+                            <a href="{:url('AdminShop/audit',array('id'=>$vo['id'],'user_id'=>$vo['user_id']))}"
+                               data-msg="您确定要审核通过？"
+                               class="js-ajax-delete">重新审核</a>
+                            <a class="faild" href="javascript:;" data-id="{$vo['id']}">驳回</a>
+                        </if>
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+            <tfoot>
+            <tr>
+                <th width="15">
+                    <label>
+                        <input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x">
+                    </label>
+                </th>
+                <th width="50">ID</th>
+                <th>商户名称</th>
+                <th>商户负责人</th>
+                <th>联系方式</th>
+                <td>余额</td>
+                <td>二维码数量</td>
+                <th>地址</th>
+                <th>审核通过时间</th>
+                <th>状态</th>
+                <th>所属代理商</th>
+                <th>备注</th>
+                <th width="180">操作</th>
+            </tr>
+            </tfoot>
+        </table>
+        <div class="table-actions">
+            <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminShop/audit')}" data-subcheck="true">审核通过
+            </button>
+            <a class="btn btn-primary btn-sm forbids">禁用
+            </a>
+
+            <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminShop/banned',array('no'=>1))}" data-subcheck="true">取消禁用
+            </button>
+
+            <button class="btn btn-danger btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminShop/delete')}" data-subcheck="true" data-msg="您确定删除吗？">
+                {:lang('DELETE')}
+            </button>
+        </div>
+    </form>
+    <div class="pagination">{$page|default=''}</div>
+
+    <div class="msg" style="display: none;">
+        <textarea class="msger" name="msg" id="" cols="68" rows="10"></textarea>
+    </div>
+
+
+</div>
+
+<input type="hidden" name="user_id" class="user_id">
+<div data-backdrop="static" class="modal fade" id="addCode" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button> -->
+                <h4 class="modal-title" id="exampleModalLabel">请填写您要分配的码段</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="recipient-start" class="control-label">起始码值:<span
+                                style="color:red">(*)</span></label>
+                        <input type="number" class="form-control" placeholder="请输入起始码值" id="code_start">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-end" class="control-label">结束码值:<span
+                                style="color:red">(*)</span></label>
+                        <input type="number" class="form-control" placeholder="请输入结束码值" id="code_end">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="layui-btn site-demo-active allot" data-type="loading">确定</button>
+                <button type="button" class="layui-btn layui-btn-normal hider">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div data-backdrop="static" class="modal fade" id="recharge" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="exampleModalLabel">请填写你需要充值的金额</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <input type="hidden" class="form-control"  id="user_id">
+                        <input type="text" name="money" class="form-control" placeholder="请输入金额" id="recharge_money">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="layui-btn site-demo-active re_money " data-type="loading">确定</button>
+                <button type="button" class="layui-btn layui-btn-normal re_hider">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+<script>
+    $(function () {
+
+        $(".alloter").click(function () {
+            var user_id = $(this).attr('data-id');
+            $(".user_id").val(user_id);
+        });
+
+        $(".hider").click(function () {
+//            addCode
+            $("#code_start").val('');
+            $("#code_end").val('');
+            $(".user_id").val('');
+            $('#addCode').modal('hide')
+        });
+        $(".re_hider").click(function () {
+//            addCode
+            $("#recharge_money").val('');
+            $("#user_id").val('');
+            $('#recharge').modal('hide')
+        });
+        $(".allot").click(function () {
+            var start = $("#code_start").val();
+            var end = $("#code_end").val();
+            var user_id = $(".user_id").val();
+            if (start.length == 0) {
+//                layer.msg('起始码值不能为空');
+                layer.tips('起始码值不能为空', '#code_start', {tips: [3, '#E74C3C']});
+                return false;
+            }
+            if (end.length == 0) {
+//                layer.msg('起始码值不能为空');
+                layer.tips('结束码值不能为空', '#code_end', {tips: [3, '#E74C3C']});
+                return false;
+            }
+
+            $.ajax({
+                url: "{:url('AdminShop/allot')}",
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    code_start: start,
+                    code_end: end,
+                    user_id: user_id
+                },
+                success: function (data) {
+                    if (data.code == 1) {
+                        layer.msg('分配成功');
+                        $('#addCode').modal('hide')
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                }
+            })
+
+        });
+
+        //充值
+        $(".re_money").click(function () {
+            var money = $("#recharge_money").val();
+            var id=$("#user_id").val();
+            var url='/user/admin_shop/index';
+            if (!js_check_fix_amount(money)) {
+                layer.msg('请输入正确的充值金额');
+                return false;
+            }
+            if (money > 10000) {
+                layer.msg('充值限额10000元');
+                return false;
+            }
+            $.post('{:url("user/Pay/sysPay")}',{money:money,id:id},function(re){
+                if(re.code == 1){
+                    window.location.href=url;
+                }else{
+                    layer.msg(re.msg);
+                }
+            },'json');
+        });
+        $(".faild").click(function () {
+            var id = $(this).attr('data-id');
+            layer.prompt({
+                formType: 2,
+                value: '',
+                title: '驳回原因',
+                area: ['800px', '350px'] //自定义文本域宽高
+            }, function (value, index, elem) {
+                if (value.length == 0) {
+                    layer.msg('驳回原因不能为空');
+                    return false;
+                }
+                $.post("{:url('AdminShop/auditFaile')}", {id: id, msg: value}, function (data) {
+                    layer.msg(data.msg);
+                    if (data.code == 1) {
+                        window.location.reload();
+                    }
+                });
+                layer.close(index);
+            });
+        });
+
+        $(".forbid").click(function () {
+            var id = $(this).attr('data-id');
+
+            layer.prompt({
+                formType: 2,
+                value: '',
+                title: '禁用原因',
+                area: ['800px', '350px'] //自定义文本域宽高
+            }, function (value, index, elem) {
+                if (value.length == 0) {
+                    layer.msg('禁用原因不能为空');
+                    return false;
+                }
+                $.post("{:url('AdminShop/banned')}", {id: id, yes: 1, msg: value}, function (data) {
+                    layer.msg(data.msg);
+                    if (data.code == 1) {
+                        window.location.reload();
+                    }
+                });
+                layer.close(index);
+            });
+
+//            layer.open({
+//                type: 1,
+//                title: '禁用原因',
+//                area: ['500px', '300px'],
+//                content: $(".msg"), //这里content是一个普通的String
+//                btn: ['确定', '取消']
+//                , yes: function (index, layero) {
+//                    var msg = $(".msger").val();
+//                    $(".msger").val('');
+//                    if (msg.length==0){
+//                        layer.msg('禁止原因不能为空');
+//                        return false;
+//                    }
+//                    $.post("{:url('AdminShop/banned')}", {id: id,yes:1,msg: msg}, function (data) {
+//                        layer.msg(data.msg);
+//                        if (data.code == 1) {
+//                            window.location.reload();
+//                        }
+//                    })
+//                }
+//                , btn2: function (index, layero) {
+//                    //按钮【按钮二】的回调
+//                    $(".msg").css('display', 'none');
+//                    //return false 开启该代码可禁止点击该按钮关闭
+//                },
+//                cancel: function(index, layero){
+//                    $(".msg").css('display', 'none');
+//                }
+//            });
+        });
+
+        $(".forbids").click(function () {
+            var ar = new Array();
+            $(".js-check:checked").each(function () {
+                ar.push($(this).val());
+            });
+            if (ar.length == 0) {
+                layer.msg('请至少选择一项');
+                return false;
+            }
+            layer.prompt({
+                formType: 2,
+                value: '',
+                title: '禁用原因',
+                area: ['800px', '350px'] //自定义文本域宽高
+            }, function (value, index, elem) {
+                if (value.length == 0) {
+                    layer.msg('禁止原因不能为空');
+                    return false;
+                }
+                $.post("{:url('AdminShop/banned')}", {ids: ar, yes: 1, msg: value}, function (data) {
+                    layer.msg(data.msg);
+                    if (data.code == 1) {
+                        window.location.reload();
+                    }
+                });
+                layer.close(index);
+            });
+
+
+//            layer.open({
+//                type: 1,
+//                title: '禁用原因',
+//                area: ['500px', '300px'],
+//                content: $(".msg"), //这里content是一个普通的String
+//                btn: ['确定', '取消']
+//                , yes: function (index, layero) {
+//                    var msg = $(".msger").val();
+//                    $(".msger").val('');
+//                    if (msg.length==0){
+//                        layer.msg('禁止原因不能为空');
+//                        return false;
+//                    }
+//                    $.post("{:url('AdminShop/banned')}", {ids: ar,yes:1,msg: msg}, function (data) {
+//                        layer.msg(data.msg);
+//                        if (data.code == 1) {
+//                            window.location.reload();
+//                        }
+//                    })
+//                }
+//                , btn2: function (index, layero) {
+//                    //按钮【按钮二】的回调
+//                    $(".msg").css('display', 'none');
+//                    //return false 开启该代码可禁止点击该按钮关闭
+//                },
+//                cancel: function(index, layero){
+//                    $(".msg").css('display', 'none');
+//                }
+//            });
+        });
+
+        var value = $(".sear").val();
+        if (value == 0) {
+            $("#all").attr('selected', true);
+        } else {
+            $("#" + value + "").attr('selected', true);
+        }
+    })
+</script>
+</html>

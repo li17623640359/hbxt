@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="个人信息" file="mobile_public@head"/>
+</head>
+<body>
+<div class="moball">
+    <div class="tops"><a class="goback" onclick="javascript:history.go(-1)" style="cursor: pointer"><img src="__TMPL__/mobile_public/img/left.png"/><em>返回</em></a><font>个人信息</font></div>
+    <div class="tops-nbsp"></div>
+    <div style="height: .2rem"></div>
+    <div class="info-li">
+        <span>头像：</span>
+        <img src="{:cmf_get_image_preview_url($data.avatar)}" class="info-tx">
+    </div>
+    <div class="info-li">
+        <span>昵称：</span>
+        <em>{$data.user_nickname|default=''}</em>
+    </div>
+    <div class="info-li">
+        <span>生日：</span>
+        <em>{:date('Y-m-d',$data.birthday)}</em>
+    </div>
+    <div class="info-li">
+        <span>性别：</span>
+        <if condition="($data.sex=='1')">
+            <em>男</em>
+            <elseif condition="($data.sex == '2')"/>
+            <em>女</em>
+            <elseif condition="($data.sex == '0')"/>
+            <em>保密</em>
+        </if>
+    </div>
+
+    <div style="height: .2rem"></div>
+    <div class="info-li">
+        <span>手机：</span>
+        <em>{$data.mobile|default=''}</em>
+    </div>
+    <div class="info-li">
+        <span>邮箱：</span>
+        <em>{$data.user_email|default=''}</em>
+    </div>
+    <div class="info-li">
+        <span>地址：</span>
+        <em>{$data.address|default=''}</em>
+    </div>
+
+</div>
+<include file="mobile_public@footer"/>
+</body>
+</html>

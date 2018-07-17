@@ -1,0 +1,45 @@
+@charset "utf-8";
+/* CSS Document */
+html,body,div,p,span,a,i,em,ul,li,h2,h3,h4,form,input,dl,dd,dt{margin:0; padding:0;}
+body,html{font-family: Arial; font-size:.24rem; color:#333; background:#fff;}
+a{text-decoration:none; color:#333; cursor:pointer;outline:none;}
+a:hover{ text-decoration:none; color:#ff5000;}
+i,em{font-style:normal;}
+ul,li{list-style:none;}
+img{border:0 none;}
+input{ outline:none; -webkit-appearance: none; border-radius:0; font-size:.24rem;}
+
+.br03{-moz-border-radius: .1rem;-webkit-border-radius: .1rem;border-radius: .1rem;}
+.br50{-moz-border-radius: 50%;-webkit-border-radius: 50%;border-radius: 50%;}
+
+.opa{filter:alpha(Opacity=90);-moz-opacity:0.9;opacity: 0.9;} 
+
+.hbs{ width: 7.5rem; display: block; overflow: hidden; margin: 0 auto;}
+
+/*提示*/
+.notes-pic{ width: 2rem; display: block; overflow: hidden; margin:2rem auto 0 auto;}
+.notes-pic img{ margin: 0 auto; width: 100%;}
+.notes-cot{ width: 6rem; line-height: .5rem; display: block; overflow: hidden; text-align: center; font-size: .3rem; margin: 0 auto;}
+
+/*活动主页*/
+.menus{ width: 7.5rem; position: fixed; z-index: 9; height: 1rem; border: #eee; margin: 0 auto; bottom: 0; background: #fff;}
+.menus a{ width: 100%; height:1rem; line-height: 1rem; float: left; display: block; overflow: hidden; font-size: .3rem; text-align: center; background:#ff5000; color:#fff;}
+.menus-nbsp{ height: 1rem;}
+
+.activitys{ width: 7.5rem; display: block; overflow: hidden; margin: 0 auto;}
+.activitys-cot{ width: 100%; display: block; overflow: hidden; margin: 0 auto;}
+.activitys-cot img{ max-width: 100%;}
+
+.acti-tc{ width: 100%; display: none;}
+.acti-tcbac{ width: 7.5rem; top: 0; bottom: 0; background: #000;filter:alpha(Opacity=50);-moz-opacity:0.5;opacity: 0.5; z-index: 99; position: fixed;}
+.acti-tccot{ width: 7.5rem; top: 0; bottom: 0; z-index: 999; display: block; overflow: hidden; position: fixed;}
+.acti-tc-mid{ width: 5.5rem; height: 6rem; background: url(../img/hb-bac.png) no-repeat; background-size:100%; display: block; overflow: hidden; margin:-3rem auto auto; top: 50%; position: relative;}
+.acti-a-have{ width: 1.5rem; height: 1.5rem; background: #facd89; border-radius: 50%; display: block; overflow: hidden; margin:2.6rem auto 0 auto; text-align: center; line-height: 1.5rem; font-size: .6rem;}
+.acti-tc-mid02{ width: 5.5rem; height: 6rem; background: url(../img/hb-bac02.png) no-repeat; background-size:100%; display: block; overflow: hidden; margin:-3rem auto auto; top: 50%; position: relative;}
+.mid-info{ width: 4.5rem; height: 2.7rem; display: block; overflow: hidden; margin: .5rem auto 0 auto;}
+.mid-info-tit{ text-align: center; font-size: .3rem; line-height: .6rem; margin: .8rem auto 0 auto;}
+.mid-info-num{ width: 100%; display: block; overflow: hidden; text-align: center;}
+.mid-info-num span{ font-size: .72rem;}
+.mid-info-num em{ font-size: .24rem;}
+.acti-a-share{ width: 3rem; height: .8rem; background: #facd89; border-radius: .2rem; display: block; overflow: hidden; margin:1.6rem auto 0 auto; text-align: center; line-height: .8rem; font-size: .3rem;}
+.acti-close{ width: .8rem; height: .8rem; border-radius: 50%; border: .03rem solid #fff; position: fixed; z-index: 9999; top: .5rem; right: 50%; margin-right: -.43rem; background: url(../img/Close-icon.png) no-repeat center center; background-size:100%;filter:alpha(Opacity=90);-moz-opacity:0.9;opacity: 0.9;}

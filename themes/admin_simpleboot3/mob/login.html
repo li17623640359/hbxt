@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<include title="欢迎登录" file="mobpublic@header" />
+</head>
+<body>
+<div class="moball">
+<!--login-->
+<div class="login-lam">Hi,欢迎登录</div>
+<div class="login-main">
+    <form class="js-ajax-form" action="{:url('mob/public/doLogin')}" method="post">
+	<input type="text" name="username" placeholder="用户名" class="login-text" />
+	<input type="password" name="password" placeholder="登录密码" class="login-text" />
+	<button class="login-btn input js-ajax-submit">立即登录</button>
+    </form>
+</div>
+</div>
+<include file="mobpublic@scripts" />
+</body>
+</html>

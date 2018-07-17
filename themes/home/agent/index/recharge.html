@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="订单信息" file="public@head"/>
+    <style>
+        .mesadr-cot {
+            z-index: 1000;
+        }
+    </style>
+
+</head>
+<body>
+
+<!--header-->
+<include file="public@top"/>
+<div class="mains">
+    <div class="mes">
+        <include file="public@agentleft"/>
+        <div class="infos-right">
+            <div class="wrap js-check-wrap">
+
+                <form action="{:url('Index/addPost')}" method="post"
+                      class="form-horizontal js-ajax-form margin-top-20">
+                    <div class="row">
+                        <div class="mes-lam">订单信息</div>
+                        <div class="col-md-12">
+                            <!--<div class="subs-tit"></div>-->
+                            <div class="mesli">
+                                <label class="layui-form-label">充值金额：</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" class="mes-text money" name="money" required lay-verify="required" placeholder="请输入充值金额"/>
+                                    <!--<input type="text" name="money" required lay-verify="required" placeholder="请输入充值金额" autocomplete="off" class="money layui-input">-->
+                                </div>
+                                <div class="layui-form-mid layui-word-aux">￥</div>
+
+                            </div>
+                            <div class="mesli">
+                                <div class="subs-tit">选择支付方式</div>
+                                <div class="payli">
+                                    <input type="radio" name="paymode" value="alipay" checked="checked" id="pay_alipay">
+                                    <label for="pay_alipay">
+                                        <img src="__TMPL__/public/img/alipay.png"/>
+                                        <em>支付宝支付</em>
+                                    </label>
+                                </div>
+                                <div class="payli">
+                                    <input type="radio" name="paymode" value="weixin" id="pay_weixinpay">
+                                    <label for="pay_weixinpay">
+                                        <img src="__TMPL__/public/img/weixinpay.png"/>
+                                        <em>微信支付</em>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mesli">
+                                <div style="float: right;">
+                                    <a class="carts-btn" href="{:url('agent/Index/balance')}">返回</a>
+                                    <button class="carts-btn" type="button" onclick="pay(this)">去支付</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Footer-->
+<include file="public@foot"/>
+<script>
+    function pay(t) {
+        layui.use('layer',function () {
+            var layer=layui.layer;
+            var pay_type = $('[name="paymode"]:checked').val();
+            var money = $(".money").val();
+            if (money.length == 0) {
+                layer.msg("充值金额不能为空");
+                return false;
+            }
+            var reg =  /^[0-9]+.?[0-9]*$/;
+            if (!reg.test($(".money").val())) {
+                layer.msg("请输入正确的数字");
+                $(".money").val('');
+                return false;
+            }
+            $.ajax({
+                type: "POST",
+                url: "{:url('agent/Index/setOrder')}",
+                async: false,
+                data: {pay_type:pay_type,money:money,type:'pay'},
+                success: function (data) {
+                    if (data.code == 1) {
+                        $(t).attr('disabled', true);
+                        window.location.href = "{:url('agent/Index/pay')}?type=" + pay_type + "&orderid=" + data.data;
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                }
+            });
+        });
+
+    }
+</script>
+</body>
+
+</html>

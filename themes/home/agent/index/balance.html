@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="余额管理" file="public@head"/>
+    <style>
+        .meinfo-pic {
+            width: auto;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+<!--header-->
+<!--header-->
+<include file="public@top"/>
+<div class="mains">
+    <div class="mes">
+    <include file="public@agentleft"/>
+    <div class="infos-right">
+        <div class="layui-card">
+            <div class="layui-card-header"></div>
+            <div class="layui-card-body">
+                余额：￥{$user_info.balance|default='0.00'}
+                <a href="{:url('agent/Index/Recharge')}" class="layui-btn">充值</a>
+
+            </div>
+
+        </div>
+        <div class="layui-tab">
+            <ul class="layui-tab-title">
+                <li class="taber all layui-this"><a href="{:url('agent/index/bill')}">流水明细</a></li>
+                <li class="taber pay"><a href="{:url('agent/index/balance')}">充值明细</a></li>
+                <!--<li>资金明细-->
+            </ul>
+
+            <div class="layui-tab-content">
+
+                <div class="layui-tab-item aller layui-show">
+
+                    <table class="layui-table">
+                        <colgroup>
+                            <col width="150">
+                            <col width="200">
+                            <col>
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th>收入/支出</th>
+                            <th>变动金额</th>
+                            <th>余额</th>
+                            <th>类型</th>
+                            <th>时间</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <notempty name="bill">
+                        <foreach name="bill" item="vo">
+                            <tr>
+                                <td>
+                                    <if condition="($vo.bill_type==1)">
+                                        收入
+                                        <else/>
+                                        支出
+                                    </if>
+                                </td>
+                                <td>{$vo.curr_amount}</td>
+                                <td>{$vo.curr_balance}</td>
+                                <td>
+                                        <if condition="$vo">
+                                            $bill_kind[$vo.bill_kind]
+                                        </if>
+                                </td>
+                                <td>{:date('Y-m-d H:i:s',$vo.create_time)}</td>
+                            </tr>
+                        </foreach>
+                        </notempty>
+                        </tbody>
+                    </table>
+                    <notempty name="bill">
+                        <ul class="pagination">{$page|default=''}</ul>
+                    </notempty>
+                </div>
+
+                <div class="layui-tab-item payer">
+
+                    <form class="well form-inline margin-top-20" method="get" action="{:url('agent/Index/balance')}">
+                        <div class="mat-type">&nbsp;&nbsp;
+                            <em>&nbsp;&nbsp;</em>
+                            <input type="text" name="start" class="mat-t layui-input" placeholder="起始时间"  id="start_time" style="width: 100px"  value="{$_GET['start']|default=''}">
+                            <em>-</em><input type="text" name="end" class="mat-t layui-input" placeholder="截止时间"  id="end_time" style="width: 100px"  value="{$_GET['end']|default=''}">
+                            <em>&nbsp;&nbsp;</em>
+                            <button type="submit" class="mat-b" style="width: 50px;">搜索</button>
+                            <a style=" width: 50px; height: 36px; line-height: 36px; text-align: center; margin-left: 10px; background: #ff5c3c; color: #fff; display: block; overflow: hidden; float: left;" href="{:url('agent/Index/balance')}">清空</a>
+
+                        </div>
+                    </form>
+                    <table class="layui-table">
+                        <colgroup>
+                            <col width="150">
+                            <col width="200">
+                            <col>
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th>方式</th>
+                            <th>状态</th>
+                            <th>金额</th>
+                            <th>时间</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <notempty name="list">
+                        <foreach name="list" item="vo">
+                            <tr>
+                                <td>{$pay_type[$vo.in_type]}</td>
+                                <td>
+                                    <if condition="($vo['status']=='1')">
+                                    成功
+                                    <elseif condition="($vo['status']=='0')"/>
+                                   失败
+                                    </if>
+                                </td>
+                                <td>￥{$vo['in_money']}</td>
+                                <td>{:date('Y-m-d H:i:s',$vo['create_time'])}</td>
+                            </tr>
+                        </foreach>
+                        </notempty>
+                        </tbody>
+                    </table>
+                    <notempty name="list">
+                    <ul class="pagination">{$page|default=''}</ul>
+                    </notempty>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+</div>
+
+<input type="hidden" id="type" value="{$type}">
+
+<!--Footer-->
+<include file="public@foot"/>
+<script type="text/javascript">
+    $(function () {
+        var type = $("#type").val();
+        $(".taber").removeClass("layui-this");
+        $("." + type + "").addClass("layui-this");
+
+        $(".layui-tab-item").removeClass("layui-show");
+        $("." + type + "er").addClass("layui-show");
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            layer.photos({
+                photos: '#layer-photos-demo'
+                , anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+            });
+        });
+        layui.use('laydate', function(){
+            var laydate = layui.laydate;
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#start_time', //指定元素
+                theme: '#ff5c3c'
+            });
+        });
+        layui.use('laydate', function(){
+            var laydate = layui.laydate;
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#end_time', //指定元素
+                theme: '#ff5c3c'
+                // type: 'datetime'
+            });
+        });
+        // layui.use('element', function () {
+        //     var element = layui.element;
+        //
+        //     //…
+        // });
+        // $(".taber").removeClass('layui-this');
+        // var typer=$(".type").val();
+        // $("."+typer+"").addClass('layui-this');
+    })
+</script>
+</body>
+<html>

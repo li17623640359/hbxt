@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="商户中心" file="public@head"/>
+    <style>
+        .meinfo-pic {
+            width: auto;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+<!--header-->
+<include file="public@top"/>
+<div class="mains">
+    <include file="public@shopLeft"/>
+    <div class="infos-right">
+        <form class="js-ajax-form" method="post">
+            <input type="hidden" name="id" value="{$res['id']}"/>
+            <div class="mes-lam">商户基本信息</div>
+            <div class="mesli">
+                <div class="mes-font">商户名称：</div>
+                <input type="text" class="mes-text" name="shop_name"
+                       value="{$res['shop_name']}"/>
+            </div>
+            <div class="mesli">
+                <div class="mes-font">商户负责人：</div>
+                <input type="text" class="mes-text" name="principal" value="{$res['principal']}" disabled/>
+            </div>
+
+            <div class="mesli">
+                <div class="mes-font">商户营业执照</div>
+                <div class="meinfo-pic">
+                    <if condition="empty($res['certificate'])">
+                        <img src="__TMPL__/public/img/default-thumbnail.png"
+                             id="thumbnail-preview" width="135" style="cursor: pointer"/>
+                        <else/>
+                        <div id="layer-photos-demo" class="layer-photos-demo">
+                            <img alt="图片名"
+                                 layer-src="{:cmf_get_image_preview_url($res['certificate'])}"
+                                 src="{:cmf_get_image_preview_url($res['certificate'])}"
+                                 id="thumbnail-preview" width="135" style="cursor: pointer"/>
+                        </div>
+                    </if>
+                </div>
+            </div>
+            <div class="mesli">
+                <div class="mes-font">商户LOGO</div>
+                <!--<button type="button" class="layui-btn" id="test1">-->
+                <!--<i class="layui-icon">&#xe67c;</i>上传图片-->
+                <!--</button>-->
+                <input type="hidden" class="logo" name="shop_logo" value="{$res['shop_logo']}">
+                <div class="meinfo-pic" id="test1">
+                    <if condition="empty($res['shop_logo'])">
+                        <img src="__TMPL__/public/img/default-thumbnail.png"
+                             id="thumbnai2-preview"
+                             width="135" style="cursor: pointer"/>
+                        <else/>
+                        <img src="{:cmf_get_image_preview_url($res['shop_logo'])}"
+                             id="thumbnai2-preview"
+                             width="135" style="cursor: pointer"/>
+                    </if>
+                </div>
+            </div>
+
+            <div class="mesli">
+                <div class="mes-font">商户联系方式：</div>
+                <input type="text" class="mes-text" value="{$res['mobile']}" disabled/>
+            </div>
+
+            <div class="mesli">
+                <div class="mes-font">商户地址：</div>
+                <div class="mesadr">
+                    <input type="text" value="{:address($res['province'])}" class="mes-adr province adrcheck"/>
+                    <input type="hidden" name="province" class="provinceery"
+                           value="{$res['province']}">
+                    <div class="mesadr-cot porvincer" style="display: none">
+                        <em>选择省 <a href="javascript:;">X</a></em>
+                        <span>
+                                    <foreach name="regions" item="vo">
+                                            <a href="javascript:;" data-id="{$vo.id}" class="prov">{$vo.name}</a>
+                                    </foreach>
+							    </span>
+                    </div>
+                </div>
+                <div class="mesadr">
+                    <input type="text" value="{:address($res['city'])}" class="mes-adr city"/>
+                    <input type="hidden" name="city" class="cityery" value="{$res['city']}">
+                    <div class="mesadr-cot citye" style="display: none;">
+                        <em>选择市 <a href="javascript:;">X</a></em>
+                        <span>
+                                  <foreach name="city" item="c">
+                                        <if condition="$c.id==$res['city']">
+                                                <a href="javascript:;" data-id="{$c.id}" class="cityer addrescity">{$c.name}</a>
+                                            <else/>
+                                                <a href="javascript:;" data-id="{$c.id}" class="cityer">{$c.name}</a>
+                                        </if>
+
+                                    </foreach>
+							    </span>
+                    </div>
+                </div>
+                <div class="mesadr">
+                    <input type="text" value="{:address($res['district'])}" class="mes-adr district"/>
+                    <input type="hidden" name="district" class="districte" value="{$res['district']}">
+                    <div class="mesadr-cot districte" name="district" style="display: none;">
+                        <em>选择区 <a href="javascript:;">X</a></em>
+                        <span>
+                            <foreach name="town" item="t">
+                                <if condition="$t.id==$res['district']">
+                                       <a href="javascript:;" data-id="{$t.id}" class="cityer addrescity">{$t.name}</a>
+                                   <else/>
+                                        <a href="javascript:;" data-id="{$t.id}" class="cityer">{$t.name}</a>
+                                </if>
+                            </foreach>
+						</span>
+                    </div>
+                </div>
+                <div class="mesadr">
+                    <input type="text" value="{$res['address']}" name="address" class="mes-adr address"/>
+                </div>
+            </div>
+            <div class="mesli">
+                <button class="mes-btn saver" type="button">立即保存</button>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+
+<!--Footer-->
+<include file="public@foot"/>
+<script type="text/javascript">
+    $(function () {
+
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            layer.photos({
+                photos: '#layer-photos-demo'
+                , anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+            });
+        });
+
+        $(".saver").click(function () {
+            var data = $("form").serialize();
+            layui.use('layer', function () {
+                var layer = layui.layer;
+                $.get("{:url('shop/index/indexPost')}" + '?' + data + "", {}, function (data) {
+                    if (data.code == 1) {
+                        layer.msg(data.msg);
+                    }
+                })
+            })
+        });
+
+
+        layui.use('upload', function () {
+            var upload = layui.upload;
+            var uploadInst = upload.render({
+                elem: '#test1', //绑定元素
+                url: '{:url("shop/Index/imgUpload")}', //上传接口
+                data: {path: 'passport'},
+                size: 2048,
+                before: function (obj, file) {
+                    $(this.elem).html('');
+                    $(this.elem).attr('disabled', 'disabled');
+                    layer.load(); //上传loading
+                },
+                done: function (res, index, upload) {
+                    // console.log(res);
+                    if (res.code != 1) {
+                        layer.msg(res.msg);
+                        $(this.elem).html('重新上传');
+                    } else {
+                        var imger = "<img id='thumbnai2-preview' width='135' style='cursor: pointer' src='__ROOT__/upload/" + res.data.data.file + "' />";
+                        $("#test1").append(imger);
+//                        $(this).next("#test1").children("img").attr('src', "__ROOT__/upload/" + res.data.data.file);
+                        $(".logo").val("__ROOT__/upload/" + res.data.data.file);
+//                        $("#passport_img").attr('data-src', "__ROOT__/upload/" + res.data.data.file);
+//                        $("#passport").val(res.data.data.file);
+//                        $(this.elem).html('更换图片');
+                    }
+                    $(this.elem).removeAttr('disabled');
+                    layer.closeAll('loading');
+                },
+                error: function () {
+                    //请求异常回调
+                    layer.closeAll('loading');
+                    layer.msg('服务器繁忙');
+                }
+            });
+        });
+
+        $(".mesadr-cot em a").click(function () {
+            $(".mesadr-cot").css({'display': 'none'});
+        });
+
+        $(".province").focus(function () {
+            $(".mesadr-cot").css({'display': 'none'});
+            $(".porvincer").css({'display': 'block'})
+        });
+
+        $(".prov").click(function () {
+            var value = $(this).html();
+            $(".province").val(value);
+            var id = $(this).attr('data-id');
+            $(".provinceery").val(id);
+            $.post("{:url('Index/address')}", {id: id}, function (data) {
+                $(".citye span a").remove();
+                $(".city").val('选择市');
+                $(".cityery").val('');
+                $(".district").val('选择区');
+                $(".districte").val('');
+                $(".porvincer").css({'display': 'none'});
+                $(".address").val('');
+                var option = "";
+                for (x in data) {
+                    option += "<a href='javascript:;' class='cityer' data-id='" + data[x].id + "'>" + data[x].name + "</a>";
+                }
+                $(".citye span").append(option);
+                $(".citye").css({'display': 'block'});
+            }, 'json');
+        });
+
+        $(".city").focus(function () {
+            $(".mesadr-cot").css({'display': 'none'});
+            $(".cityery").css({'display': 'block'})
+        });
+
+        $(document).on('click', '.cityer', function () {
+            var value = $(this).html();
+            $(".city").val(value);
+            var id = $(this).attr('data-id');
+            $(".cityery").val(id);
+            $.post("{:url('Index/address')}", {id: id}, function (data) {
+                $(".districte span a").remove();
+                $(".district").val('选择区');
+                $(".districte").val('');
+                $(".address").val('');
+                $(".citye").css({'display': 'none'});
+                var option = "";
+                for (x in data) {
+                    option += "<a href='javascript:;' class='districteery' data-id='" + data[x].id + "'>" + data[x].name + "</a>";
+                }
+                $(".districte span").append(option);
+                $(".districte").css({'display': 'block'});
+            }, 'json');
+        });
+
+        $(".district").focus(function () {
+            $(".mesadr-cot").css({'display': 'none'});
+            $(".districte").css({'display': 'block'})
+        });
+        $(document).on('click', '.districteery', function () {
+            var value = $(this).html();
+            $(".district").val(value);
+            var id = $(this).attr('data-id');
+            $(".districte").val(id);
+            $(".districte").css({'display': 'none'});
+        });
+
+        $(".city").focus(function () {
+            $(".mesadr-cot").css({'display': 'none'});
+            $(".citye").css({'display': "block"});
+        });
+
+        $(".district").focus(function () {
+            $(".mesadr-cot").css({'display': 'none'});
+            $(".districte").css({'display': "block"});
+        });
+    })
+</script>
+</body>
+</html>

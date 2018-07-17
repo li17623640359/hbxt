@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="商户管理" file="mobpublic@header"/>
+    <style>
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body>
+<div class="moball">
+    <!--login-->
+    <div class="tops"><a class="goback" href="{:url('mob/Main/index')}"><img
+            src="__TMPL__/mobpublic/assets/img/left.png"/><em>返回</em></a><font>商户列表</font></div>
+    <div class="tops-nbsp"></div>
+    <div class="searchs">
+        <form action="" method="post">
+            <input type="search" class="searchs-text" value="{$param['shop_name']|default=''}" name="shop_name"
+                   placeholder="搜索"/>
+        </form>
+    </div>
+
+    <div id="datalist">
+
+    </div>
+
+</div>
+
+
+</body>
+<include file="mobpublic@scripts"/>
+<script>
+
+    function del(id) {
+        layer.confirm('确定要删除?', {icon: 3, title: '系统提示'}, function (index) {
+            $.post('/mob/mob_shop/delete', {id: id}, function (re) {
+                layer.msg(re.msg);
+                window.location.reload();
+            }, 'json');
+            layer.close(index);
+        });
+    }
+
+    //    禁用
+    function disable(id) {
+        layer.prompt({
+            formType: 2,
+            title: '请输入禁用原因',
+        }, function (value, index, elem) {
+            if (value.length == 0) {
+                layer.msg('禁用原因不能为空');
+                return false;
+            }
+            $.post("{:url('mob/MobShop/banned')}", {id: id, yes: 1, msg: value}, function (data) {
+                layer.msg(data.msg);
+                if (data.code == 1) {
+                    window.location.reload();
+                }
+            });
+            layer.close(index);
+        });
+    }
+
+    //    取消禁用
+    function undisable(id) {
+        layer.confirm('确定要取消禁用?', {icon: 3, title: '系统提示'}, function (index) {
+            $.post("{:url('mob/MobShop/banned')}", {id: id, no: 1}, function (re) {
+                layer.msg(re.msg);
+                window.location.reload();
+            }, 'json');
+            layer.close(index);
+        });
+    }
+
+    //    驳回
+    function bohui(id) {
+        layer.prompt({
+            formType: 2,
+            title: '请输入驳回原因',
+        }, function (value, index, elem) {
+            if (value.length == 0) {
+                layer.msg('驳回原因不能为空');
+                return false;
+            }
+            $.post("{:url('mob/MobShop/auditFaile')}", {id: id, msg: value}, function (data) {
+                layer.msg(data.msg);
+                if (data.code == 1) {
+                    window.location.reload();
+                }
+            });
+            layer.close(index);
+        });
+    }
+
+    //    审核
+    function shenhe(id) {
+        layer.confirm('确定要审核通过?', {icon: 3, title: '系统提示'}, function (index) {
+            $.post("{:url('mob/MobShop/audit')}", {id: id}, function (re) {
+                layer.msg(re.msg);
+                window.location.reload();
+            }, 'json');
+            layer.close(index);
+        });
+    }
+
+    //    分配
+    function fenpei(id) {
+        layer.open({
+            type: 1,
+            title: '码值分配',
+            closeBtn: 0,
+            shadeClose: true,
+//            skin: 'yourclass',
+//            content: "<input id='code_start' type='number' name='a'><input id='code_end' type='number' name='b'>",
+            content: '<div class="layui-form-item">\n' +
+            '    <label class="layui-form-label" style="text-align: center;">起始码值</label>\n' +
+            '    <div class="layui-input-block">\n' +
+            '      <input type="number" name="title" id="code_start" placeholder="请输入起始码值" autocomplete="off" class="layui-input">\n' +
+            '    </div>\n' +
+            '  </div>' +
+            '<div class="layui-form-item">\n' +
+            '    <label class="layui-form-label" style="text-align: center;">结束码值</label>\n' +
+            '    <div class="layui-input-block">\n' +
+            '      <input type="number" id="code_end" name="title" placeholder="请输入结束码值" autocomplete="off" class="layui-input">\n' +
+            '    </div>\n' +
+            '  </div>',
+            btn: ['确定', '取消'], //只是为了演示
+            yes: function () {
+                var start = $("#code_start").val();
+                var end = $("#code_end").val();
+                var user_id = id;
+                if (start.length == 0) {
+                    layer.tips('起始码值不能为空', '#code_start', {tips: [3, '#E74C3C']});
+                    return false;
+                }
+                if (end.length == 0) {
+                    layer.tips('结束码值不能为空', '#code_end', {tips: [3, '#E74C3C']});
+                    return false;
+                }
+
+                $.ajax({
+                    url: "{:url('mob/MobShop/allot')}",
+                    type: 'post',
+                    dataType: 'json',
+                    data: {
+                        code_start: start,
+                        code_end: end,
+                        user_id: user_id
+                    },
+                    success: function (data) {
+                        if (data.code == 1) {
+                            layer.msg('分配成功');
+                            location.reload();
+                        } else {
+                            layer.msg(data.msg);
+                        }
+                    }
+                })
+            }
+            , btn2: function () {
+                layer.closeAll();
+            }
+        });
+    }
+
+    //    充值
+    function sysPay(id) {
+        var url = "/mob/mob_shop/index";
+        window.location.href = "/mob/index/sysPay?id=" + id + '&url=' + url;
+    }
+
+
+    layui.use('flow', function () {
+        var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
+        var flow = layui.flow;
+        flow.load({
+            elem: '#datalist', //指定列表容器
+            done: function (page, next) { //到达临界点（默认滚动触发），触发下一页
+                var lis = [];
+                var shop_name = $(".searchs-text").val();
+                //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+                $.ajax({
+                    type: 'POST', dataType: 'json',
+                    url: "{:url('mob/MobShop/index')}",
+                    data: {page: page, shop_name: $(".searchs-text").val()},
+                    success: function (res) {
+                        console.log(res);
+                        //假设你的列表返回在data集合中
+                        layui.each(res.data.list.data, function (index, item) {
+                            var a = '';
+                            if (item.site == 'banned') {
+                                a += '<a class="layui-btn-normal" style="color: white;" href="javascript:undisable(' + item.id + ')">取消禁用</a>';
+                            } else if (item.site == 'audit') {
+                                a += '<a class="layui-btn-normal" style="color: white;" href="javascript:shenhe(' + item.id + ')">审核</a>';
+                                a += '<a class="layui-btn-danger" style="color: white;" href="javascript:bohui(' + item.id + ')">驳回</a>';
+                            } else if (item.site == 'reject') {
+                                a += '< class="layui-btn-normal" style="color: white;" href="javascript:undisable(' + item.id + ')">重新审核</a>';
+//                                a+='<a href='+"{:url('mob/MobShop/audit')}&id="+item.id+''>审核</a>';
+                            } else if (item.site == 'normal') {
+                                a += '<a class="layui-btn-danger" style="color: white;" href="javascript:disable(' + item.id + ')">禁用</a>';
+                                a += '<a class="layui-btn-normal" style="color: white;" href="javascript:fenpei(' + item.user_id + ')" >分配</a>';
+                            }
+
+                            lis.push(
+                                '<div href="sh-detals.html" class="sh-list">' +
+                                '            <div class="sh-list-name"><a href=' + "{:url('mob/MobShop/detals')}" + '?id=' + item.id + '>' + item.shop_name + '</a></div>' +
+                                '            <div class="sh-list-peo"><a href="javascript:;">' + item.principal + '</a></div>' +
+                                '            <div class="sh-list-other">' +
+                                '                <a class="layui-btn-normal" style="color: white;" href=' + "{:url('mob/MobShop/detals')}" + '?id=' + item.id + '>查看详情</a>' +
+                                '                <a class="layui-btn-normal" style="color: white;" href="javascript:sysPay(' + item.user_id + ');">充值</a>' +
+                                '                <a class="layui-btn-danger" style="color: white;" href="javascript:del(' + item.id + ');">删除</a>' +
+                                a +
+                                '            </div>' +
+                                '        </div>'
+                            );
+
+                        });
+                        //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                        //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                        next(lis.join(''), page < res.data.list.last_page);
+                    }
+                });
+            }
+        });
+    });
+</script>
+</html>

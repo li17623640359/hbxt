@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<include title="忘记密码" file="public@head"/>
+</head>
+<body>
+
+<!--login&register-->
+<div class="landr-top">
+	<a href="javascript:;">
+		<if condition="(!empty(cmf_get_option('site_info')['site_logo']))">
+			<img src="{:cmf_get_image_preview_url(cmf_get_option('site_info')['site_logo'])}" />
+			<else/>
+			<img src="__TMPL__/public/img/ifunLogo.png"/>
+		</if>
+	</a>
+	<font>找回密码</font>
+</div>
+<div class="landr-main">
+	<div class="landr-cen">
+		<div class="landr-form landr-r">
+			<div class="formslam">找回密码</div>
+			<div class="forms-text">
+				<div class="forms-icon"><img src="__TMPL__/public/img/nameIcon.png"/></div>
+				<input type="text" id="js-mobile-input" name="username" placeholder="手机号码"/>
+			</div>
+			<div class="forms-text">
+				<div class="forms-icon"><img src="__TMPL__/public/img/codeIcon.png"/></div>
+				<input type="text" placeholder="验证码"/>
+				<div class="forms-code">
+					<a href="javascript:;" class="js-get-mobile-code"
+					   data-wait-msg="[second]秒后才能再次获取" data-mobile-input="#js-mobile-input"
+					   data-url="{:url('shop/VerificationCode/sendForget')}"
+					   data-init-second-left="60">获取手机验证码</a>
+				</div>
+			</div>
+			<div class="forms-text">
+				<div class="forms-icon"><img src="__TMPL__/public/img/passwordIcon.png"/></div>
+				<input type="password" name="password" placeholder="设置密码"/>
+			</div>
+			<div class="forms-text">
+				<div class="forms-icon"><img src="__TMPL__/public/img/passwordIcon.png"/></div>
+				<input type="password" name="repassword" placeholder="确认密码"/>
+			</div>
+			<button class="forms-btn">确认提交</button>
+		</div>
+	</div>
+</div>
+<include file="public@foot"/>
+</body>
+</html>

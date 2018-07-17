@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="活动详情" file="public@head"/>
+    <style>
+        .meinfo-pic {
+            width: auto;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+<!--header-->
+<include file="public@top"/>
+<div class="mains">
+    <div class="mes" style="overflow: auto;">
+        <include file="public@shopLeft"/>
+        <div class="infos-right">
+            <div class="layui-card">
+                <div class="layui-card-header">红包详情</div>
+                <div class="layui-card-body">
+                    <div class="well">&nbsp;&nbsp;
+                        <span>承办者：<em><if condition="$one.user_type eq 2">代理<elseif condition="$one.user_type eq 3">商户<else>未知</if>-{$one.user_nickname}-{$one.mobile}</em></span>
+                        &nbsp;&nbsp;<span>活动名称：<em>{$one.activity_name}</em></span>
+                        &nbsp;&nbsp;<span>活动类型：<em>{$activity_type[$one.type]}</em></span>
+                        &nbsp;&nbsp;<span>总金额：<em>{$one.total_money}</em></span>
+                        &nbsp;&nbsp;<span>红包数量：<em>{$one.packet_num}</em></span>
+                        &nbsp;&nbsp;<span>分配模式：<em>{$packet_type[$one.packet_type]}</em></span>
+                        <if condition="$one.packet_type eq 1 or $one.packet_type eq 3 "><br/>
+                            &nbsp;&nbsp;<span>大额红包：<em>{:implode(" | ", $one.packet_set_list)}</em></span>
+                        </if>
+                    </div>
+                    <if condition="$one.type eq 2">
+                        <div class="well">&nbsp;&nbsp;
+                            <span>活动二维码：<em>{$code.code_num}</em></span>
+                            <span>二维码图：<em><if condition="(!empty($code.code_img))">
+                            <a href="javascript:parent.imagePreviewDialog('{:cmf_get_image_preview_url($code.code_img)}')">
+                                <img src="{:cmf_get_image_preview_url($code.code_img)}" width="50" style="cursor: pointer"/>
+                            </a>
+                        </if></em></span>
+                        </div>
+                    </if>
+                </div>
+
+            </div>
+            <div class="layui-tab">
+                <div class="layui-tab-content">
+                    <div class="layui-tab-item layui-show">
+                        <table class="layui-table">
+                            <colgroup>
+                                <col width="150">
+                                <col width="200">
+                                <col>
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>编号</th>
+                                <th>码图</th>
+                                <th>金额</th>
+                                <th>领取者</th>
+                                <th>领取时间</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <foreach name="res" item="vo">
+                                <tr>
+                                        <td>{$vo.code_num}</td>
+                                        <td><if condition="(!empty($vo.code_img))">
+                                            <a href="javascript:parent.imagePreviewDialog('{:cmf_get_image_preview_url($vo.code_img)}')">
+                                                <img src="{:cmf_get_image_preview_url($vo.code_img)}" width="50" style="cursor: pointer"/>
+                                            </a>
+                                        </if></td>
+
+                                    <td>
+                                        <notempty name="$vo.end_time">{$vo.money}</notempty>
+                                    </td>
+                                    <td>{$vo.user_name}</td>
+                                    <td><notempty name="$vo.end_time">{:date("Y-m-d H:i:s",$vo.end_time)}</notempty></td>
+                                </tr>
+                            </foreach>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+<!--Footer-->
+<include file="public@foot"/>
+
+<script type="text/javascript">
+    $(function () {
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            layer.photos({
+                photos: '#layer-photos-demo'
+                , anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+            });
+        });
+        layui.use('laydate', function(){
+            var laydate = layui.laydate;
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#start_time', //指定元素
+                theme: '#ff5c3c'
+            });
+        });
+        layui.use('laydate', function(){
+            var laydate = layui.laydate;
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#end_time', //指定元素
+                theme: '#ff5c3c'
+                // type: 'datetime'
+            });
+        });
+        // layui.use('element', function () {
+        //     var element = layui.element;
+        //
+        //     //…
+        // });
+        $(".taber").removeClass('layui-this');
+        var typer=$(".type").val();
+        $("."+typer+"").addClass('layui-this');
+    })
+</script>
+</body>
+<html>

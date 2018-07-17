@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<include file="mobile_public@head" title="用户充值"/>
+<body>
+<div class="moball">
+    <!--login-->
+    <div class="tops"><a class="goback" onclick="javascript:history.go(-1)" style="cursor: pointer"><img src="__TMPL__/mobile_public/img/left.png"/><em>返回</em></a><font>充值</font></div>
+    <div class="tops-nbsp"></div>
+
+    <div class="ye-main">
+        <input type="text" name="money" placeholder="输入充值金额" class="ye-text" />
+        <button class="ye-btn input">微信支付</button>
+    </div>
+</div>
+</body>
+<include file="mobile_public@footer"/>
+<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script>
+var payParam = null;
+$().ready(function(){
+    $('.ye-btn').click(function(){
+        var money = $("input[name=money]").val();
+        if(!js_check_is_wechat()){
+            layer.msg('请在微信内访问该页面');
+            return false;
+        }
+        if (!js_check_fix_amount(money)) {
+            layer.msg('请输入正确的充值金额');
+            return false;
+        }
+        if (money > 10000) {
+            layer.msg('充值限额10000元')
+            return false;
+        }
+        $.post('{:url("user/Pay/wxJsPay")}',{money:money},function(re){
+            if(re.code == 1){
+                payParam = re.data;
+                callpay();
+            }else{
+                layer.msg(re.msg);
+            }
+        },'json');
+    });
+});
+function callpay(){
+    if (typeof WeixinJSBridge == "undefined") {
+        if (document.addEventListener) {
+            document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+        } else if (document.attachEvent) {
+            document.attachEvent('WeixinJSBridgeReady', jsApiCall);
+            document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+        }
+    } else {
+        jsApiCall();
+    }
+}
+
+function jsApiCall(){
+    WeixinJSBridge.invoke(
+        'getBrandWCPayRequest', {
+            appId: payParam.appId,
+            nonceStr: payParam.nonceStr,
+            package: payParam.package,
+            signType: payParam.signType,
+            timeStamp: payParam.timeStamp,
+            paySign: payParam.paySign
+        },
+        function (res) {
+        	//alert(res.err_code+res.err_desc+res.err_msg);
+            if (res.err_msg == "get_brand_wcpay_request:ok") {
+                window.location.href = '{$url}';
+            } else {
+            	WeixinJSBridge.log(res.err_msg);
+            }
+        }
+    );
+}
+</script>
+</html>

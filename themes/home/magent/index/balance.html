@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="余额管理" file="mobile_public@head"/>
+</head>
+<div class="moball">
+    <!--login-->
+    <div class="tops"><a class="goback" href="{:url('magent/Index/index')}" style="cursor: pointer">
+        <img src="__TMPL__/mobile_public/img/left.png"/><em>返回</em></a><font>余额管理</font></div>
+    <div class="tops-nbsp"></div>
+
+    <div class="ye-top">
+        <em>￥{$user_money.balance|default=''}</em>
+        <a href="{:url('magent/Index/recharge')}">充值</a>
+    </div>
+    <div class="manage-li">
+        <div class="manage-li-lam">
+            <em>充值记录</em>
+        </div>
+        <div class="manage-li-cot">
+            <em></em>
+            <a href="{:url('magent/Index/rechargeRecord')}" class="yecz">查看详细&nbsp;&gt;</a>
+        </div>
+    </div>
+    <div class="manage-li">
+        <div class="manage-li-lam">
+            <em>流水明细</em>
+        </div>
+        <div class="manage-li-cot">
+            <em></em>
+            <a href="{:url('magent/Index/bill')}">查看详细&nbsp;&gt;</a>
+        </div>
+    </div>
+</div>
+<include file="mobile_public@footer"/>
+</body>
+</html>

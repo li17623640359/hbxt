@@ -1,0 +1,15 @@
+body {
+    background: #fff;
+}
+
+.wrap {
+    width:100%;
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    background:url(images/login_bac.jpg) no-repeat center center;
+    height:auto;
+    padding-top: 230px;
+}

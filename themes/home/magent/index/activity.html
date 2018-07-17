@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<include title="活动列表" file="mobile_public@head"/>
+<body>
+<div class="moball">
+    <!--login-->
+    <div class="tops"><a class="goback" href="{:url('magent/Index/index')}" style="cursor: pointer"><img src="__TMPL__/mobile_public/img/left.png"/><em>返回</em></a><font>我的活动</font></div>
+    <div class="tops-nbsp"></div>
+    <div class="searchs">
+        <form action="#" method="post">
+        <input type="search" id="activity_name" value="{$activity_name}" name="activity_name" class="searchs-text" placeholder="活动名称" />
+        </form>
+    </div>
+    <div id="datalist">
+
+    <!--<a href="" class="hd-li">-->
+        <!--<em></em>-->
+        <!--<span><img src=""/></span>-->
+        <!--<em>-->
+           <!--代理-->
+        <!--</em>-->
+    <!--</a>-->
+
+    </div>
+    <!--<div style="line-height: .8rem; text-align: center; color: #999;">没有更多了~</div>-->
+</div>
+<script>
+    layui.use('flow', function(){
+        var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
+        var flow = layui.flow;
+        var activity_name= $("#activity_name").val();
+        flow.load({
+            elem: '#datalist', //指定列表容器
+            done: function(page, next){ //到达临界点（默认滚动触发），触发下一页
+                var lis = [];
+                //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+                $.ajax({
+                    type: 'POST', dataType: 'json',
+                    url: "{:url('magent/Index/activity')}",
+                    data: {page:page,activity_name:activity_name},
+                    success: function (res) {
+                        //假设你的列表返回在data集合中
+                        layui.each(res.data.list.data, function(index, item){
+                            var id = item.id;
+                            var img = '';
+                            var user_type='';
+                            if(item.activity_img == ''){
+                                img = '<img src="__TMPL__/public/img/default-thumbnail.png" />';
+                            }else{
+                                img = '<img src="__ROOT__/upload/'+item.activity_img+'" />';
+                            }
+                            if(item.user_type=="2"){
+                                user_type='代理';
+                            }else if(item.user_type=="3"){
+                                user_type='商户';
+                            }else {
+                                user_type='未知';
+                            }
+                            lis.push(
+                                     '<a href="/magent/Index/detals/id/'+id+'" class="hd-li">\n'
+                                     +'<em>'+item.activity_name+'</em>'
+                                     +' <span>'+img+'</span>'
+                                     +'<em> '+user_type+'-'+item.user_nickname+'-'+item.mobile+'</em></a>');
+                        });
+                        //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                        //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                        next(lis.join(''), page < res.data.list.last_page);
+                    }
+                });
+            }
+        });
+    });
+    // function del(id){
+    //     layer.confirm('确定要删除?',{icon: 3, title:'系统提示'}, function(index){
+    //         $.post('/mob/admin_product/brandDelete',{id:id},function(re){
+    //             layer.msg(re.msg);
+    //             window.location.reload();
+    //         },'json');
+    //         layer.close(index);
+    //     });
+    // }
+</script>
+<include file="mobile_public@footer"/>
+</body>
+</html>

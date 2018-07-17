@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="商户详情" file="mobile_public@head"/>
+</head>
+<body>
+<div class="moball">
+    <!--login-->
+    <div class="tops"><a class="goback" onclick="javascript:history.go(-1)" style="cursor: pointer"><img src="__TMPL__/mobile_public/img/left.png"/><em>返回</em></a><font>商户详情</font></div>
+    <div class="tops-nbsp"></div>
+    <div class="sh-li-name">{$shop_data.shop_name|default=''}</div>
+    <div style="height: .2rem;"></div>
+    <div class="sh-d-li">
+        <span>负责人：</span>
+        <em>{$shop_data.principal|default=''}</em>
+    </div>
+    <div class="sh-d-li">
+        <span>联系方式：</span>
+        <em>{$shop_data.mobile|default=''}</em>
+    </div>
+    <div class="sh-d-li">
+        <span>商户地址：</span>
+        <em>{$regions.name|default=''}{$city.name|default=''}{$town.name|default=''}{$shop_data.address|default=''}</em>
+    </div>
+
+    <div style="height: .2rem;"></div>
+    <div class="sh-d-li">
+        <span>商户状态：</span>
+        <em>{$shop_site[$shop_data.site]}</em>
+    </div>
+</div>
+<include file="mobile_public@footer"/>
+</body>
+</html>

@@ -1,0 +1,180 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="代理商列表" file="mobpublic@header" />
+</head>
+<body>
+<div class="moball">
+    <!--login-->
+    <div class="tops"><a href="/mob/main/index" class="goback" onclick="javascript:history.go(-1)"><img src="__TMPL__/mobpublic/assets/img/left.png"/><em>返回</em></a><font>代理商列表</font></div>
+    <div class="tops-nbsp"></div>
+    <div class="searchs">
+        <form action="#" method="post">
+        <input type="search" id="user_nickname" value="{$user_nickname}" name="user_nickname"  class="searchs-text" placeholder="代理商名" />
+        </form>
+    </div>
+    <div id="datalist">
+    <!--<div href="sh-detals.html" class="sh-list">-->
+        <!--<div class="sh-list-name"><a href="sh-detals.html">永辉超市</a></div>-->
+        <!--<div class="sh-list-peo"><a href="sh-detals.html">小李</a></div>-->
+        <!--<div class="sh-list-other">-->
+            <!--<a href="javascript:;">按钮1</a>-->
+            <!--<a href="javascript:;">按钮1</a>-->
+            <!--<a href="javascript:;">按钮1</a>-->
+            <!--<a href="javascript:;">按钮1</a>-->
+        <!--</div>-->
+    <!--</div>-->
+    </div>
+
+
+</div>
+<include  file="mobpublic@scripts"/>
+<script>
+    layui.use('flow', function(){
+        var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
+        var flow = layui.flow;
+        var user_nickname = $("#user_nickname").val();
+        flow.load({
+            elem: '#datalist', //指定列表容器
+            done: function(page, next){ //到达临界点（默认滚动触发），触发下一页
+                var lis = [];
+                //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+                $.ajax({
+                    type: 'POST', dataType: 'json',
+                    url: "{:url('mob/MobAgent/index')}",
+                    data: {page:page,user_nickname:user_nickname},
+                    success: function (res) {
+                        //假设你的列表返回在data集合中
+                        layui.each(res.data.list.data, function(index, item){
+                            var id = item.id;
+                            var user_status = '';
+                            var user_btn='';
+                            if(item.user_status=='0'){
+                                user_status='已禁用';
+                                user_btn='<a href="javascript:examine('+id+');" class="layui-btn-normal" style="color: white">启用</a>';
+                            }else if(item.user_status=='1'){
+                                user_status='正常';
+                                user_btn='<a href="javascript:quExamine('+id+');" class="layui-btn-danger" style="color: white">禁用</a>';
+                            }else{
+                                user_status='未验证';
+                            }
+                            lis.push(
+                            '<div href="sh-detals.html" class="sh-list">'
+                               +'<div class="sh-list-peo"><a href="javascript:;">姓名:'+item.user_nickname+'</a></div>'
+                               +' <div class="sh-list-peo"><a href="javascript:;">电话:'+item.mobile+'</a></div>'
+                               +' <div class="sh-list-peo"><a href="javascript:;">状态:'+user_status+'</a></div>'
+                               +' <div class="sh-list-peo"><a href="javascript:;">余额:'+item.balance+'</a></div>'
+                               +' <div class="sh-list-peo"><a href="javascript:;">二维码余量:'+item.sum_code+'</a></div>'
+                                 +' <div class="sh-list-other">'
+                                +'<a href="/mob/mob_agent/agentInfo?id='+id+'" class="layui-btn-normal" style="color: white">详情</a>'
+                                +'<a href="javascript:sysPay('+id+');" class="layui-btn-normal" style="color: white">充值</a>'
+                                +'<a href="javascript:fenpei('+id+');" class="layui-btn-normal" style="color: white">分配</a>'
+                                +user_btn
+                                +'<a href="javascript:del('+id+');" class="layui-btn-danger" style="color: white">删除</a>'
+                                +'</div>'
+                                +' </div>'
+                          );
+                        });
+                        //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                        //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                        next(lis.join(''), page < res.data.list.last_page);
+                    }
+                });
+            }
+        });
+    });
+    function del(id){
+        layer.confirm('确定要删除?',{icon: 3, title:'系统提示'}, function(index){
+            $.post('/mob/mob_agent/delete',{id:id},function(re){
+                layer.msg(re.msg);
+                window.location.reload();
+            },'json');
+            layer.close(index);
+        });
+    }
+    function quExamine(id){
+        layer.confirm('确定要禁用?',{icon: 3, title:'系统提示'}, function(index){
+            $.post('/mob/mob_agent/quExamine',{id:id},function(re){
+                layer.msg(re.msg);
+                window.location.reload();
+            },'json');
+            layer.close(index);
+        });
+    }
+    function examine(id){
+        layer.confirm('确定要启用?',{icon: 3, title:'系统提示'}, function(index){
+            $.post('/mob/mob_agent/examine',{id:id},function(re){
+                layer.msg(re.msg);
+                window.location.reload();
+            },'json');
+            layer.close(index);
+        });
+    }
+    function sysPay(id){
+        var url="/mob/mob_agent/index";
+     window.location.href="/mob/index/sysPay?id="+id+'&url='+url;
+    }
+    function fenpei(id) {
+        layer.open({
+            type: 1,
+            title: '码值分配',
+            closeBtn: 0,
+            shadeClose: true,
+//            skin: 'yourclass',
+//            content: "<input id='code_start' type='number' name='a'><input id='code_end' type='number' name='b'>",
+            content:'<div class="layui-form-item">\n' +
+            '    <label class="layui-form-label" style="text-align: center;">起始码值</label>\n' +
+            '    <div class="layui-input-block">\n' +
+            '      <input type="number" name="title" id="code_start" placeholder="请输入起始码值" autocomplete="off" class="layui-input" style="width:90%">\n' +
+            '    </div>\n' +
+            '  </div>' +
+            '<div class="layui-form-item">\n' +
+            '    <label class="layui-form-label" style="text-align: center;">结束码值</label>\n' +
+            '    <div class="layui-input-block">\n' +
+            '      <input type="number" id="code_end" name="title" placeholder="请输入结束码值" autocomplete="off" class="layui-input" style="width:90%">\n' +
+            '    </div>\n' +
+            '  </div>',
+            btn: ['确定', '取消'], //只是为了演示
+            yes: function () {
+                var start = $("#code_start").val();
+                var end = $("#code_end").val();
+                var user_id=id;
+                if (start.length == 0) {
+//                layer.msg('起始码值不能为空');
+                    layer.tips('起始码值不能为空','#code_start',{tips: [3,'#E74C3C']});
+                    return false;
+                }
+                if (end.length == 0) {
+//                layer.msg('起始码值不能为空');
+                    layer.tips('结束码值不能为空','#code_end',{tips: [3,'#E74C3C']});
+                    return false;
+                }
+
+                $.ajax({
+                    url:"{:url('mob/MobAgent/agentCode')}",
+                    type:'post',
+                    dataType:'json',
+                    data:{
+                        start_num:start,
+                        end_num:end,
+                        agent_id:user_id
+                    },
+                    success:function (data) {
+                        if (data.code==1){
+                            layer.msg('分配成功');
+                            parent.location.reload();
+                        }else{
+                            layer.msg(data.msg);
+                        }
+                    }
+                })
+            }
+            , btn2: function () {
+                layer.closeAll();
+            }
+        });
+    }
+</script>
+</body>
+</html>

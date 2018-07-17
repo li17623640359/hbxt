@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="活动列表" file="public@head"/>
+    <style>
+        .meinfo-pic {
+            width: auto;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+<!--header-->
+<!--header-->
+<include file="public@top"/>
+<div class="mains">
+    <div class="mes">
+        <include file="public@agentleft"/>
+        <div class="infos-right" >
+            <div class="layui-card">
+                <div class="layui-card-header"></div>
+                <div class="layui-card-body">
+                    <a href="{:url('agent/Activity/add')}" class="layui-btn">添加活动</a>
+                </div>
+
+            </div>
+            <div class="layui-tab">
+                <form class="well form-inline margin-top-20" method="get" action="{:url('agent/Activity/index')}">
+                    <div class="mat-type">
+                        &nbsp;&nbsp;
+                        <em>承办者：</em>
+                        <select id="user_id" name="user_id" class="mat-t layui-input" style="width: 200px;">
+                            <option value="0" <if condition="$param.user_id eq '0' ">selected="selected"</if>>全部</option>
+                            <foreach name="users" item="vo">
+                                <option value="{$vo.id}" <if condition="$vo.id eq $param.user_id">selected="selected"</if>><if condition="$vo.user_type eq 2">代理<elseif condition="$vo.user_type eq 3">商户</if>-{$vo.user_nickname}-{$vo.mobile}</option>
+                            </foreach>
+                        </select>
+                        <em>审核：</em>
+                        <select  name="is_examine" class="mat-t layui-input" style="width: 65px;">
+                            <option value="">请选择审核状态</option>
+                            <option value="0" <if condition="'0' eq $param.is_examine">selected="selected"</if>>未审核</option>
+                            <option value="1" <if condition="'1' eq $param.is_examine">selected="selected"</if>>已审核</option>
+                        </select>
+                        <em>活动：</em>
+                        <select  name="site" class="mat-t layui-input" style="width: 65px;">
+                            <option value="">请选择活动状态</option>
+                            <option value="1">已开启</option>
+                            <option value="0">已关闭</option>
+                        </select>
+                        <em>按月查询：</em>
+                        <input type="text" name="start_time" class="mat-t layui-input" placeholder="请输入月份"  id="start_time" style="width: 100px"  value="{$_GET['start_time']|default=''}">
+                        <!--<em>结束时间：</em>-->
+                        <!--<input type="text" name="end_time" class="mat-t layui-input" placeholder="活动结束时间"  id="end_time" style="width: 130px"  value="{$_GET['end_time']|default=''}">-->
+                        <em>&nbsp;&nbsp;</em>
+                        <button type="submit" class="mat-b" style="width: 50px;">搜索</button>
+                        <a style=" width: 50px; height: 36px; line-height: 36px; text-align: center; margin-left: 10px; background: #ff5c3c; color: #fff; display: block; overflow: hidden; float: left;" href="{:url('agent/Activity/index')}">清空</a>
+
+                    </div>
+                </form>
+                <ul class="layui-tab-title">
+                    <!--<li class="taber layui-this all"><a href="{:url('agent/index/balance',array('type'=>'all'))}">流水明细</a></li>-->
+                    <!--<li class="taber pay"><a href="{:url('agent/index/balance',array('type'=>'pay'))}">充值明细</a></li>-->
+                    <!--<li>资金明细-->
+                </ul>
+
+                <div class="layui-tab-content">
+                    <div class="layui-tab-item layui-show">
+                        <table class="layui-table">
+                            <colgroup>
+                                <col width="150">
+                                <col width="200">
+                                <col>
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <!--<th width="50">ID</th>-->
+                                <th width="220">活动信息</th>
+                                <th width="100">活动时间</th>
+                                <th width="60">活动配图</th>
+                                <th width="100">承办者</th>
+                                <th width="120">点击/扫码量</th>
+                                <th width="100">状态</th>
+                                <th width="60">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <foreach name="res" item="vo">
+                                <tr>
+                                    <td>
+                                        {$vo.activity_name}<br/>
+                                        {$activity_type[$vo.type]}<br/>
+                                         限制时间: <if condition="$vo.is_limit eq 0">不限制<else/>{$vo.is_limit}</if><br/>
+                                        {$packet_type[$vo.packet_type]}<br/>
+                                        金额：{$vo.total_money}<br/>
+                                        数量：{$vo.packet_num}
+                                    </td>
+                                    <td>开始时间：<br/>{:date("Y-m-d H:i:s",$vo.start_time)}<br/>
+                                        结束时间：<br/>{:date("Y-m-d H:i:s",$vo.end_time)}
+                                    </td>
+                                    <td style="width: 30px">
+                                        <if condition="(!empty($vo.activity_img))">
+                                            <a href="javascript:parent.imagePreviewDialog('{:cmf_get_image_preview_url($vo.activity_img)}')">
+                                                <img src="{:cmf_get_image_preview_url($vo.activity_img)}" width="50" style="cursor: pointer"/>
+                                            </a>
+                                        </if>
+                                    </td>
+                                    <td><if condition="$vo.user_type eq 2">代理:<elseif condition="$vo.user_type eq 3">商户:<else>未知:</if>{$vo.user_nickname}<br/>{$vo.mobile}</td>
+                                    <td>点击：{$vo.click_num}<br/>扫码：{$vo.record_num}</td>
+                                    <td>是否审核：{$is_examine[$vo.is_examine]}<br/>
+                                        是否开启：{$is_site[$vo.site]}</td>
+                                    <td>
+                                        <a href="{:url('Activity/details',array('id'=>$vo['id']))}" style="color: #00b7ee">详情</a><br/>
+                                        <a href="{:url('Activity/edit',array('id'=>$vo['id']))}" style="color: red">编辑</a><br/>
+                                        <if condition="$vo.is_examine eq 1">
+                                            <if condition="$vo.site eq 0">
+                                            <a href="#" data-id="{$vo.id}" id="open" style="color: #00b7ee">开启</a>
+                                                <else/>
+                                                <a href="#" data-id="{$vo.id}" id="close" style="color: red">关闭</a>
+                                            </if>
+                                        </if>
+                                        <!--<a href="{:url('Activity/delete',array('id'=>$vo['id']))}" class="js-ajax-delete">{:lang('DELETE')}</a>-->
+                                    </td>
+                                </tr>
+                            </foreach>
+                            </tbody>
+                        </table>
+                    </div>
+                    <ul class="pagination">{$res->render()|default=''}</ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!--Footer-->
+<include file="public@foot"/>
+<script type="text/javascript">
+    $(function () {
+
+        $(".cj").click(function () {
+
+        });
+
+
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            layer.photos({
+                photos: '#layer-photos-demo'
+                , anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+            });
+        });
+        layui.use('laydate', function(){
+            var laydate = layui.laydate;
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#start_time', //指定元素
+                theme: '#ff5c3c',
+                type: 'month'
+            });
+        });
+        layui.use('laydate', function(){
+            var laydate = layui.laydate;
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#end_time', //指定元素
+                theme: '#ff5c3c',
+                type: 'month'
+                // type: 'datetime'
+            });
+        });
+        $('#open').click(function () {
+            var id=$('#open').attr('data-id');
+            $.ajax({
+                async: false,
+                type: "POST",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                url: "{:url('agent/Activity/siteOpen')}",//url
+                data: {id:id,site:'1'},
+                success: function (result) {
+                    if (result.code == 0) {
+                        layer.msg(result.msg);
+                        return false;
+
+
+                    } else {
+                        layer.msg(result.msg);
+                        window.location.reload();
+                        return false;
+                    }
+
+                },
+            });
+        });
+        $('#close').click(function () {
+            var id=$('#close').attr('data-id');
+            $.ajax({
+                async: false,
+                type: "POST",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                url: "{:url('agent/Activity/siteClose')}",//url
+                data: {id:id,site:'0'},
+                success: function (result) {
+                    if (result.code == 0) {
+                        layer.msg(result.msg);
+                        return false;
+
+
+                    } else {
+                        layer.msg(result.msg);
+                        window.location.reload();
+                        return false;
+                    }
+
+                },
+            });
+        });
+        // layui.use('element', function () {
+        //     var element = layui.element;
+        //
+        //     //…
+        // });
+        $(".taber").removeClass('layui-this');
+        var typer=$(".type").val();
+        $("."+typer+"").addClass('layui-this');
+    });
+    // function saveData(){
+    //     var user_id=$('#user_id').val();
+    //
+    //     var start=$('#start_time').val();
+    //     var end=$('#end_time').val();
+    //     if(user_id==0){
+    //         layer.tips('承办者不能为空','#user_id',{tips: [2,'#005cd7']});
+    //         return false
+    //     }
+    //     location.href = '{:url("agent/Activity/index")}?user_id='+user_id+'&start='+start+'&end='+end;
+    // }
+</script>
+</body>
+<html>

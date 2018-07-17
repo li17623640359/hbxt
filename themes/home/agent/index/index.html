@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="个人信息" file="public@head"/>
+</head>
+<body>
+
+<!--header-->
+<include file="public@top"/>
+<div class="mains">
+    <div class="mes">
+        <include file="public@agentleft"/>
+        <div class="infos-right">
+
+            <form class="js-ajax-form" action="{:url('agent/index/index')}" method="post">
+                <input type="hidden" name="id" value="{$data.id|default=''}">
+                <div class="mes-lam">个人信息</div>
+                <div class="mesli">
+                    <div class="mes-font">头像：</div>
+                    <div class="meinfo-pic">
+                        <input type="hidden" name="avatar" id="avatar" value="{$data.avatar|default=''}">
+                        <a class="up-btn" id="avatar_btn" style="cursor: pointer">
+                            <if condition="empty($data.avatar)">
+                                <img onclick="showDemoImg(this);" id="avatar_img" src="__TMPL__/public/img/default-thumbnail.png" width="135" />
+                                <else/>
+                                <img onclick="showDemoImg(this);" id="avatar_img" src="{:cmf_get_image_preview_url($data.avatar)}" width="135" style="cursor: pointer" />
+                            </if>
+                        </a>
+                    </div>
+                </div>
+                <div class="mesli">
+                    <div class="mes-font">我的名字：</div>
+                    <input type="text" class="mes-text" name="user_nickname" value="{$data.user_nickname|default=''}"/>
+                </div>
+                <div class="mesli">
+                    <div class="mes-font">我的余额：</div>
+                    <input type="text" class="mes-text" name="balance" value="{$data.balance|default=0}" disabled="disabled"/>
+                </div>
+                <div class="mesli">
+                    <div class="mes-font">我的手机：</div>
+                    <input type="text" class="mes-text" name="mobile" value="{$data.mobile|default=''}" disabled="disabled"/>
+                </div>
+                <div class="mesli">
+                    <div class="mes-font">我的生日：</div>
+                    <if condition="$data.birthday==0">
+                        <input type="text" name="birthday" style="width: 323px" id="birthday" class="layui-input mes-text" placeholder="请选择出生日期" />
+                        <else/>
+                        <input class="layui-input mes-text" style="width: 323px" id="birthday"type="text" value="{:date('Y-m-d',$data.birthday)}" placeholder="2013-01-04" name="birthday">
+                    </if>
+                </div>
+                <div class="mesli">
+                    <div class="mes-font">我的性别：</div>
+                            <input type="radio" class="mes-sex" id="man" name="sex" value="1"  <if condition="$data.sex eq '1'">checked="checked"</if> /><label for="man" class="sex-l">男</label>
+                            <input type="radio" class="mes-sex" id="woman" name="sex" value="2" <if condition="$data.sex eq '2'">checked="checked"</if>/><label for="woman" class="sex-l">女</label>
+                            <input type="radio" class="mes-sex" id="secrecy" name="sex" value="0" <if condition="$data.sex eq '0'">checked="checked"</if>/><label for="secrecy" class="sex-l">保密</label>
+                </div>
+                <div class="mesli">
+                    <div class="mes-font">我的邮箱：</div>
+                    <input type="text" class="mes-text" name="user_email" value="{$data.user_email|default=''}"/>
+                </div>
+                <div class="mesli">
+                    <div class="mes-font">我的地址：</div>
+                    <input type="text" class="mes-text" name="address" value="{$data.address|default=''}"/>
+                </div>
+                <div class="mesli">
+                    <button class="mes-btn js-ajax-submit" type="submit">立即保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--Footer-->
+<include file="public@foot"/>
+<script>
+    function showDemoImg(i) {
+        var img = $(i).attr('data-src');
+        if (img == undefined) {
+            return;
+        }
+        $(".typeupimg .tiimg").attr("src", img);
+        $(".typeupimg").show("slow");
+
+    };
+    layui.use('laydate', function () {
+        var n = new Date();
+        var y = n.getFullYear()-25;
+        var m = n.getMonth()+1;
+        var d = n.getDate();
+        if(m<10){m = '0'+m;}
+        if(d<10){d = '0'+d;}
+        var s = y+'-'+m+'-'+d;
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#birthday',
+            // lang: 'en',
+            theme: '#0000CD',
+            value:s
+        });
+    });
+    layui.use('upload', function () {
+        var upload = layui.upload;
+        var uploadInst = upload.render({
+            elem: '#avatar_btn', //绑定元素
+            url: '{:url("agent/Index/imgUpload")}', //上传接口
+            data: {path: 'avatar'},
+            size: 2048,
+            before: function (obj, file) {
+                // $(this.elem).html('上传中...');
+                $(this.elem).attr('disabled', 'disabled');
+                layer.load(); //上传loading
+            },
+            done: function (res, index, upload) {
+                // console.log(res);
+                if (res.code != 1) {
+                    layer.msg(res.msg);
+                    $(this.elem).html('<img onclick="showDemoImg(this);" id="avatar_img" src="__TMPL__/public/img/default-thumbnail.png" width="135" />');
+                } else {
+                    $("#avatar_img").attr('src', "__ROOT__/upload/" + res.data.data.file);
+                    $("#avatar_img").attr('data-src', "__ROOT__/upload/" + res.data.data.file);
+                    $("#avatar").val(res.data.data.file);
+                    // $(this.elem).html('更换图片');
+                }
+                $(this.elem).removeAttr('disabled');
+                layer.closeAll('loading');
+            },
+            error: function () {
+                //请求异常回调
+                layer.closeAll('loading');
+                layer.msg('服务器繁忙');
+            }
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include title="活动详情" file="mobpublic@header"/>
+</head>
+<body>
+<div class="moball">
+    <!--login-->
+    <div class="tops"><a class="goback" href="{:url('mob/MobActivity/index')}"><img
+            src="__TMPL__/mobpublic/assets/img/left.png"/><em>返回</em></a><font>活动详情</font></div>
+    <div class="tops-nbsp"></div>
+
+    <div class="hd-d-pic">
+        <span>
+            <if condition="(empty($res['activity_img']))">
+                    <img src='__TMPL__/mobpublic/assets/img/default.png'>
+                <else/>
+                    <img src="{:cmf_get_image_preview_url($res['activity_img'])}"/>
+            </if>
+        </span>
+        <em>{$res['activity_name']}</em>
+    </div>
+    <div style="height: .2rem"></div>
+    <div class="hd-d-li">
+        <span>发布时间：</span>
+        <em>{:date('Y-m-d H:i:s',$res['create_time'])}</em>
+    </div>
+    <div class="hd-d-li">
+        <span>承办者：</span>
+        <em>
+            <if condition="($user['user_type']==2)">
+                代理-{$user['user_nickname']}-{$user['mobile']}
+                <else/>
+                商户-{$user['user_nickname']}-{$user['mobile']}
+            </if>
+        </em>
+    </div>
+    <div class="hd-d-li">
+        <span>活动类型：</span>
+        <em>
+            <if condition="($res['type']==1)">
+                多二维码，单一红包
+                <else/>
+                单二维码,多红包
+            </if>
+        </em>
+    </div>
+    <div class="hd-d-li">
+        <span>时间限制：</span>
+        <em>
+            <if condition="(empty($res['is_limit']))">
+                无限制
+                <else/>
+                {$res['is_limit']}
+            </if>
+        </em>
+    </div>
+
+    <div class="hd-d-li">
+        <span>点击量：</span>
+        <em>
+          {$res.click_num}
+        </em>
+    </div>
+
+
+    <div style="height: .2rem"></div>
+    <div class="hd-d-li">
+        <span>红包金额：</span>
+        <em>￥{$res['total_money']}</em>
+    </div>
+    <div class="hd-d-li">
+        <span>红包数量：</span>
+        <em>{$res['packet_num']}</em>
+    </div>
+    <div class="hd-d-li">
+        <span>分配模式：</span>
+        <em>
+            <if condition="($res['packet_type']==1)">
+                大额，随机配置
+                <elseif condition="($res['packet_type']==2)"/>
+                随机配置
+                <elseif condition="($res['packet_type']==3)"/>
+                大额，等额配置
+                <else/>
+                等额配置
+            </if>
+        </em>
+    </div>
+
+    <if condition="((!empty($res['packet_ext'])) || (!empty($res['fixed_ext'])))">
+        <div class="hd-d-li">
+            <span>分配金额：</span>
+            <em>
+                <if condition="(!empty($res['packet_ext']))">
+                    大额红包：
+                    <foreach name="res['packet_ext']" item="vo">
+                        <br/>数量：{$vo['num']} 最小金额：{$vo['min']} 最大金额：{$vo['max']}
+                    </foreach>
+                </if>
+                <if condition="(!empty($res['fixed_ext']))">
+                    <br>定额红包：
+                    <foreach name="res['fixed_ext']" item="vo">
+                        <br/>数量：{$vo['num']} 金额：{$vo['money']}
+                    </foreach>
+                </if>
+
+            </em>
+        </div>
+    </if>
+
+    <div style="height: .2rem"></div>
+    <div class="hd-d-li">
+        <span>活动状态：</span>
+        <em>
+            <if condition="(empty('is_examine'))">
+                未审核
+                <else/>
+                已审核
+            </if>
+        </em>
+    </div>
+
+</div>
+</body>
+<include file="mobpublic@scripts"/>
+</html>
